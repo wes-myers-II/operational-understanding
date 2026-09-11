@@ -1,126 +1,94 @@
 # Level rules
 
-Three levels, each self-sufficient for a different reader mode. The same topic appears at all
-three; what changes is the unit of explanation and how much is deferred to the level below.
+The goal of an operational-understanding artifact: the reader understands the focus area so
+well they can explain exactly how it works at a 4th-grade reading level to anyone in the
+company, and can open the code and find any part of it without help.
+
+The structure is fixed. Every artifact has the same sections in the same order. Only the
+contents vary. This is what makes the output deterministic and lets the reader ask for it
+casually ("use this skill to help me understand X and the change I'm making to it").
+
+## Fixed structure
+
+| Section | Question it answers | Unit of explanation | Anchor style |
+|---|---|---|---|
+| **Plain explanation** | How would I explain this to anyone? | one paragraph, 4th-grade reading level | none — no code names |
+| **High** | Where does this sit in the whole system, and what does data flow through to reach it? | modules, processes, subsystems, external systems | module / process / directory names |
+| **Mid** | How does data move from outside the system into the focus area, and what happens to it there? | functions, broken into named logical chunks | `File.cc` + `Function` + chunk name |
+| **Low** | This mid chunk is confusing — what exactly does the code do? | verbatim code next to plain English | `File.cc` + `Function` + chunk name |
+| **Your change** (when the user names one) | What does my add/remove/change touch? | the mid chunks, state, and external contracts it affects | as above |
+| **Where to look** | Something is wrong — where do I start? | symptom → function → grep string | `File.cc` + `Function` |
+
+Optional appendix: **Traces** — a real situation followed through the mid chunks, when a
+branch cannot be understood from a single reading. Never a level; never the organizing unit.
+
+## Anchoring
+
+- **No line numbers.** They go stale. Anchor with file and function; inside a large function,
+  anchor with the chunk name, which is a plain-English description of what that stretch of
+  code does ("the chunk that tries known addresses before listening").
+- Every proper noun carries its anchor **where it appears**, every time — function
+  (`RequestClerk.cc · ReceiveRouterMessage`), member (`RequestClerk.h · identity_to_role_`),
+  external thing (`ROS2 topic kRequestReplyTopic, published by RTC`). The reader must never
+  scroll back to find what something is.
+- Assume the reader is a competent engineer. Do not assume they know this codebase's
+  framework vocabulary: define a framework term in one clause the first time it appears, and
+  say what a thing **is**, never what it is not.
+
+## Code excerpts
+
+- Verbatim lines only, copied from the stated branch. No paraphrased arguments, no `foo(...)`,
+  no `caches...`. If a stretch is cut, mark it on its own line:
+  `// … 6 lines omitted: assigns the cache pointers passed in`.
+- Author notes are comments in a distinct color, prefixed `// ←`, and are the only non-source
+  text inside a code block.
+- A code block appears at the Low level, and at the Mid level only for a function whose shape
+  *is* the explanation (a dispatch loop, a switch). Everywhere else, name the function and
+  describe the chunk.
+
+## High level — "the system as a whole"
+
+Two or three cards:
+- **The system**: the processes/modules that exist, and where the focus area sits. One
+  diagram of boxes = modules/processes, edges = the transport between them (protocol, topic,
+  file). Table: module → directory → what it owns.
+- **The path**: the subsystems data passes through from the outside world to the focus area
+  and back, in order, one line each. This is the spine the mid level expands.
+- **External systems**: anything outside this code that affects how it runs (other programs,
+  network peers, files on disk, hardware, timers) — what it provides, and which module in the
+  path consumes it.
+
+No functions at this level except the entry point.
+
+## Mid level — "how data moves into the focus area"
+
+One card per **flow** — one path data takes from outside to inside (a connection being made,
+a request being handled, a reply going back, a control handoff). Each card:
+1. Answer line: what moves, from where, to where.
+2. The flow as ordered steps. Each step = `File.cc · Function` (+ chunk name for big
+   functions) → one plain sentence of what that chunk does → what it reads/writes.
+3. For big functions: a **chunk map** — the function's body split into 3–7 named chunks, in
+   order, so the reader can open the function and locate each by reading.
+4. Branches: where the flow forks, both outcomes, in the same step list.
+5. Link down: any chunk that needs the exact code links to its Low card.
+
+Simplify here. The mid level should make the flow feel as simple as it actually is. If a
+flow needs more than ~8 steps, it is two flows.
+
+## Low level — "exactly what the code does"
+
+One card per confusing chunk. Two columns or two stacked blocks: the verbatim code, and a
+plain-English walk of it, sentence per statement group. Say which mid step it serves.
+Cross-branch notes when the code differs between branches.
 
 ## Reading-time budget
 
-Estimate at 220 words/minute for prose, 90 words/minute for code excerpts, +30 s per diagram,
-+20 s per table. `scripts/reading_time.py` computes this from the HTML.
-
-| Unit | Limit |
-|---|---|
-| one section (an `<h2>`/`<h3>` block with a badge) | ≤ 5 min; target 2–4 |
-| High level total | ≤ 10 min |
-| Mid level total | ≤ 20 min |
-| Low level total | uncapped, but every section ≤ 5 min and reachable from a mid-level link |
-| whole artifact (stated at the top) | give a number; also state "High only: N min" |
-
-If a section is over, split by scenario or by mechanism — never by cutting the state table or
-the key insight.
-
-## High level — "the whole thing in one flow"
-
-Answer: what is this, what are its moving parts, how does one complete interaction pass
-through it, and what state does it keep. A reader who stops here should be able to have a
-design conversation about it.
-
-Four cards, in this order:
-- **The pieces**: architecture diagram (who talks to whom, who initiates) + a table of
-  component / owner / does.
-- **The lifecycle**: the states the code actually names, as a flow strip and a
-  `stateDiagram-v2`; one callout on the transition that people get wrong.
-- **The state, grouped**: every field that defines "what the system thinks is true," as 3–5
-  boxes, each box one question ("who is connected right now", "where to dial next"). If two
-  fields look alike, say how they differ, inside the box.
-- **The facts to carry**: the 2–4 insights as boxes with bullets and a link into Mid.
-- Closing line: "What I simplified here: …"
-
-Exclude: function-by-function narration, code excerpts, field-by-field tables.
-
-## Every page, at every level — scannable before it is readable
-
-A reader who does not read a single paragraph must still see the flow. Every card opens in
-this order, no exceptions:
-
-1. **Answer line** — one bold sentence: what this page tells you.
-2. **Flow strip or diagram** — the mechanism as ordered tiles (`number · FunctionName · one
-   clause`) or a Mermaid flowchart whose nodes are function names. Branch tiles marked `alt`;
-   terminal/failure tiles marked `stop`.
-3. **Table** — function → does → reads → writes (or field → before → after → so).
-4. **Prose** — folded inside `<details><summary>Narrative</summary>`. Optional.
-
-Prose outside the fold is limited to the answer line, captions, and callouts. If a page needs
-a paragraph to be understood, the strip is wrong; fix the strip.
-
-## Mid level — "mechanisms, grounded in the code"
-
-Answer: which functions run, in what order, reading/writing which state — shown with the
-**real code**, so the reader can open the file and recognize it. The unit is the
-**mechanism** — one function chain that does one job (the main loop, getting connected,
-identifying a sender, dispatching, replying, streaming, handoff, teardown). One card per
-mechanism; the card's subtitle is the chain itself (`A → B → C`).
-
-Every mid card, in order:
-1. Answer line.
-2. **Where block**: file · function signature · line · called from · calls. This is the
-   reader's map into the source; it is the most important element on the card.
-3. **The real function body, trimmed** to its decisions, with the author's notes as
-   `// ←` comments in a distinct color. Paraphrased pseudo-flow is not a substitute:
-   readers who know the code recognize real code and distrust paraphrase.
-4. Table: callee → line → reads → writes, or field → before → after.
-5. Prose only in callouts or folded.
-
-Mid level total may exceed the 20-minute budget when the excess is code; keep each card
-under 5 minutes.
-
-## Language rules (from reader feedback)
-
-- Say what a thing **is**. Do not define by negation ("this is not an X") — especially when
-  the reader may not know X. If a framework term is needed, define it in one clause the first
-  time it appears ("an ATK Node — the framework's unit that owns ROS2 publishers").
-- Say obvious things plainly. Subtlety that the reader must infer is a defect.
-- A diagram earns its place only when a table cannot show the same thing. Prefer the code
-  excerpt, then the table, then the diagram. Three or four diagrams in a whole artifact is
-  typical.
-
-Scenarios are **not** the load-bearing structure. They live in a separate **Traces** tab: a
-real situation run through the mechanisms — actor, wire, sequence diagram, state table — each
-linking back to the mechanism cards it exercises. Six or fewer.
-
-Diagram choice: `flowchart` with real condition text for decision chains, `sequenceDiagram`
-for traces and handoffs, `stateDiagram-v2` only when the states are named in code.
-
-Closing line per level: "What I simplified here: …"
-
-## Low level — "the place to go when a mid step didn't land"
-
-Answer: show me exactly. Each Low section serves one mid-level step or one mechanism.
-
-Include:
-- Annotated code excerpt (real, from the stated branch, trimmed to the relevant lines).
-  Annotate *why*, not *what*: the invariant, the ordering constraint, the failure it prevents.
-- Field-by-field table when a function sets/clears several members.
-- The exact conditions (quote them) for any branch the mid level summarized.
-- Threading/ordering notes when two contexts touch the same state.
-- Cross-branch notes if the topic exists in more than one branch ("on main X; on branch Y").
-
-Mandatory final section — **Navigation map**:
-
-| Symptom / question | First function to open | Log string to grep |
-|---|---|---|
-
-At least six rows. This is the table the reader will actually return to.
-
-## Callout kinds (use the template's classes)
-
-- `insight` — a fact that reorganizes the mental model.
-- `gotcha` — a behavior that bites in the field.
-- `simplified` — "I compressed this; the full version is at <link>."
-- `verify` — a claim sourced from a comment/ticket, not from reading the executing code.
+`scripts/reading_time.py` reports per-card minutes: 220 wpm prose, 90 wpm code, +30 s per
+diagram, +20 s per table. Keep every card under 5 minutes; split by flow or chunk, never by
+cutting an anchor.
 
 ## Voice
 
-Direct, declarative, present tense. Say what the system does, not what you did. No hedge-by-
-negation ("this is not X"); state what it is. One idea per paragraph. Tables over prose when
-there are more than three parallel facts.
+Direct, declarative, present tense. Plain words. One idea per sentence. Tables over prose for
+parallel facts. The plain explanation at the top is the test of the whole document: if it
+cannot be written simply, the understanding is incomplete.
