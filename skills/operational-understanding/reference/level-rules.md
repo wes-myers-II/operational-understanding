@@ -25,40 +25,49 @@ Answer: what is this, what are its moving parts, how does one complete interacti
 through it, and what state does it keep. A reader who stops here should be able to have a
 design conversation about it.
 
-Include:
-- **The pieces** table: components / processes / threads / boundaries (sockets, endpoints,
-  queues, topics) / external actors, one line each with its purpose and direction (who calls
-  whom, who initiates).
-- **The state model**: every piece of persistent state that defines "what the system thinks is
-  true," grouped by category, one line each. If two fields look alike, say how they differ.
-- **The spine**: the one loop / lifecycle / pipeline that everything else hangs off, as a
-  numbered list in execution order.
-- **Key insights** as callout boxes: the 2–4 facts that make the mid level make sense.
-- **One diagram**: architecture (boxes/wires) or the spine as a flow.
+Four cards, in this order:
+- **The pieces**: architecture diagram (who talks to whom, who initiates) + a table of
+  component / owner / does.
+- **The lifecycle**: the states the code actually names, as a flow strip and a
+  `stateDiagram-v2`; one callout on the transition that people get wrong.
+- **The state, grouped**: every field that defines "what the system thinks is true," as 3–5
+  boxes, each box one question ("who is connected right now", "where to dial next"). If two
+  fields look alike, say how they differ, inside the box.
+- **The facts to carry**: the 2–4 insights as boxes with bullets and a link into Mid.
 - Closing line: "What I simplified here: …"
 
 Exclude: function-by-function narration, code excerpts, field-by-field tables.
 
-## Mid level — "functions and module flow"
+## Every page, at every level — scannable before it is readable
 
-Answer: which functions run, in what order, reading/writing which state, for each scenario a
-reader will actually encounter. A reader who stops here can open the code and navigate.
+A reader who does not read a single paragraph must still see the flow. Every card opens in
+this order, no exceptions:
 
-Structure as **scenarios**, each told as actor action → boundary → system state:
-1. **Trigger**: what the human/client/upstream system did, and what literally crossed the
-   boundary (protocol, port, endpoint, message or event type, payload if it matters).
-2. **Path**: the functions in call order. For each: one clause on what it does, the condition
-   that selects it, and the state it touches. Parameters that come from somewhere non-obvious
-   get a "from:" note.
-3. **State table**: field → before → after → what that value now causes.
-4. **Branches**: where the path forks (success/failure, race), show both.
-5. **Link down**: any step compressed here links to its Low section.
+1. **Answer line** — one bold sentence: what this page tells you.
+2. **Flow strip or diagram** — the mechanism as ordered tiles (`number · FunctionName · one
+   clause`) or a Mermaid flowchart whose nodes are function names. Branch tiles marked `alt`;
+   terminal/failure tiles marked `stop`.
+3. **Table** — function → does → reads → writes (or field → before → after → so).
+4. **Prose** — folded inside `<details><summary>Narrative</summary>`. Optional.
 
-Diagram per scenario: `sequenceDiagram` for multi-party time flow, `stateDiagram-v2` for
-lifecycle, `flowchart` for decision-heavy logic. Messages/edges use real function names and
-real condition text.
+Prose outside the fold is limited to the answer line, captions, and callouts. If a page needs
+a paragraph to be understood, the strip is wrong; fix the strip.
 
-Closing line per scenario or per level: "What I simplified here: …"
+## Mid level — "mechanisms"
+
+Answer: which functions run, in what order, reading/writing which state. The unit is the
+**mechanism** — one function chain that does one job (the main loop, getting connected,
+identifying a sender, dispatching, replying, streaming, handoff, teardown). One card per
+mechanism; the card's subtitle is the chain itself (`A → B → C`).
+
+Scenarios are **not** the load-bearing structure. They live in a separate **Traces** tab: a
+real situation run through the mechanisms — actor, wire, sequence diagram, state table — each
+linking back to the mechanism cards it exercises. Six or fewer.
+
+Diagram choice: `flowchart` with real condition text for decision chains, `sequenceDiagram`
+for traces and handoffs, `stateDiagram-v2` only when the states are named in code.
+
+Closing line per level: "What I simplified here: …"
 
 ## Low level — "the place to go when a mid step didn't land"
 

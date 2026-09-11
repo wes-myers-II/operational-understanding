@@ -1,80 +1,112 @@
 <title>SUBSYSTEM NAME</title>
 <style>
-  /* Tokens: define the full light palette here, redefine only tokens in the dark blocks. */
   :root {
     --bg: #f6f7f5; --fg: #1c2024; --muted: #5d6873; --rule: #d9dedd; --card: #ffffff; --card-hover: #eef3f5;
-    --accent: #1f6f8b; --accent-ink: #ffffff; --insight: #e4eff4; --gotcha: #f5ead6; --gotcha-edge: #b7742a;
-    --simpl: #eceef0; --simpl-edge: #7a8590; --verify: #f1eadb; --verify-edge: #9a7b2a;
-    --code: #eef1f0; --link: #17627c; --done: #2e8b57;
+    --accent: #1f6f8b; --accent-ink: #ffffff; --tile: #e9f1f5; --tile-edge: #b9d3df;
+    --gotcha: #f5ead6; --gotcha-edge: #b7742a; --verify: #f1eadb; --verify-edge: #9a7b2a;
+    --code: #eef1f0; --link: #17627c; --done: #2e8b57; --a: #c9dfe8; --b: #1f6f8b;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --bg: #121518; --fg: #e4e7ea; --muted: #9aa5ae; --rule: #2a3138; --card: #191d21; --card-hover: #1f262c;
-    --accent: #69b4d2; --accent-ink: #0e1418; --insight: #16272f; --gotcha: #2e2416; --gotcha-edge: #d29a4a;
-    --simpl: #1d2227; --simpl-edge: #6b7680; --verify: #2b2617; --verify-edge: #c9a24a;
-    --code: #1c2126; --link: #7fc4de; --done: #5fbf85;
+    --accent: #69b4d2; --accent-ink: #0e1418; --tile: #17242b; --tile-edge: #2d4a57;
+    --gotcha: #2e2416; --gotcha-edge: #d29a4a; --verify: #2b2617; --verify-edge: #c9a24a;
+    --code: #1c2126; --link: #7fc4de; --done: #5fbf85; --a: #24404c; --b: #69b4d2;
   }}
   :root[data-theme="dark"] {
     --bg: #121518; --fg: #e4e7ea; --muted: #9aa5ae; --rule: #2a3138; --card: #191d21; --card-hover: #1f262c;
-    --accent: #69b4d2; --accent-ink: #0e1418; --insight: #16272f; --gotcha: #2e2416; --gotcha-edge: #d29a4a;
-    --simpl: #1d2227; --simpl-edge: #6b7680; --verify: #2b2617; --verify-edge: #c9a24a;
-    --code: #1c2126; --link: #7fc4de; --done: #5fbf85;
+    --accent: #69b4d2; --accent-ink: #0e1418; --tile: #17242b; --tile-edge: #2d4a57;
+    --gotcha: #2e2416; --gotcha-edge: #d29a4a; --verify: #2b2617; --verify-edge: #c9a24a;
+    --code: #1c2126; --link: #7fc4de; --done: #5fbf85; --a: #24404c; --b: #69b4d2;
   }
-  body { background: var(--bg); color: var(--fg); font: 16px/1.62 -apple-system, Segoe UI, sans-serif; }
-  main { max-width: 900px; margin: 0 auto; padding: 28px 24px 100px; }
-  h1, h2, h3 { text-wrap: balance; font-weight: 600; }
-  h1 { font-size: 1.6rem; margin: 0; }
-  h2 { font-size: 1.75rem; margin: 1.5rem 0 .75rem; line-height: 1.2; }
-  h3 { font-size: 1.15rem; margin: 2rem 0 .5rem; }
-  p { margin: .6rem 0; max-width: 72ch; }
-  .eyebrow { font-family: ui-monospace, Menlo, monospace; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
-  a { color: var(--link); }
-  code, pre { font-family: ui-monospace, Menlo, monospace; }
-  code { font-size: .88em; background: var(--code); padding: .05em .3em; border-radius: 3px; }
-  pre { background: var(--code); padding: .9rem 1rem; overflow-x: auto; font-size: .82rem; line-height: 1.5; }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 "IBM Plex Sans", -apple-system, Segoe UI, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 24px 100px; }
+  h1 { font-size: 1.5rem; margin: 0; font-weight: 600; }
+  h2 { font-size: 1.6rem; margin: 1rem 0 .25rem; line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  p { margin: .5rem 0; max-width: 78ch; }
+  a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  code, pre, .mono { font-family: "IBM Plex Mono", Menlo, monospace; }
+  code { font-size: .86em; background: var(--code); padding: .05em .3em; border-radius: 3px; }
+  pre { background: var(--code); padding: .8rem 1rem; overflow-x: auto; font-size: .8rem; line-height: 1.5; margin: .6rem 0; }
   pre code { background: none; padding: 0; font-size: inherit; }
-  pre.mermaid { background: var(--card); border: 1px solid var(--rule); }
-  figcaption { color: var(--muted); font-size: .86rem; margin-top: .4rem; }
+  pre.mermaid { background: var(--card); border: 1px solid var(--rule); padding: .5rem; }
+  figure { margin: .75rem 0 1rem; }
+  figcaption { color: var(--muted); font-size: .84rem; margin-top: .35rem; }
   .scroll { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; margin: .75rem 0 1rem; font-size: .9rem; font-variant-numeric: tabular-nums; }
-  th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
-  .callout { border-left: 3px solid var(--accent); padding: .7rem 1rem; margin: 1.1rem 0; background: var(--insight); max-width: 78ch; }
-  .callout .k { display: block; font: 500 .7rem/1.4 ui-monospace, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .3rem; }
+  table { border-collapse: collapse; width: 100%; margin: .5rem 0 .75rem; font-size: .86rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: .4rem .55rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; }
+  td:first-child { white-space: nowrap; }
+  .eyebrow { font-family: "IBM Plex Mono", Menlo, monospace; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+
+  /* the answer line: what this page tells you, one sentence, always first */
+  .answer { font-size: 1.05rem; color: var(--muted); margin: 0 0 1rem; max-width: 80ch; }
+  .answer b { color: var(--fg); font-weight: 600; }
+
+  /* flow strip: numbered function tiles with arrows — the page's spine, readable without reading */
+  .flow { display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0 1rem; align-items: stretch; }
+  .flow .st { position: relative; flex: 1 1 150px; max-width: 220px; background: var(--tile); border: 1px solid var(--tile-edge); padding: .55rem .7rem .6rem; display: flex; flex-direction: column; gap: .15rem; }
+  .flow .st .n { font: 500 .66rem "IBM Plex Mono", Menlo, monospace; color: var(--accent); letter-spacing: .08em; }
+  .flow .st .f { font: 500 .8rem/1.3 "IBM Plex Mono", Menlo, monospace; word-break: break-word; }
+  .flow .st .d { font-size: .8rem; line-height: 1.35; color: var(--muted); }
+  .flow .st.alt { background: var(--card); border-style: dashed; }
+  .flow .st.stop { background: var(--gotcha); border-color: var(--gotcha-edge); }
+  .flow .arrow { align-self: center; color: var(--muted); font-size: 1.1rem; padding: 0 .1rem; }
+  .flow.vert { flex-direction: column; }
+  .flow.vert .st { max-width: none; }
+  .flow.vert .arrow { align-self: flex-start; padding-left: 1rem; transform: rotate(90deg); }
+
+  /* stage marks */
+  .stage { display: inline-block; font: 500 .7rem/1.5 "IBM Plex Mono", Menlo, monospace; padding: 0 .4rem; border-radius: 3px; }
+  .stage.a { background: var(--a); color: var(--fg); }
+  .stage.b { background: var(--b); color: var(--accent-ink); }
+
+  /* fact boxes grid */
+  .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .6rem; margin: .75rem 0 1rem; }
+  .box { background: var(--card); border: 1px solid var(--rule); padding: .7rem .85rem; }
+  .box .t { font-weight: 600; font-size: .9rem; margin-bottom: .3rem; }
+  .box ul { margin: 0; padding-left: 1.1rem; font-size: .84rem; line-height: 1.5; }
+  .box li code { font-size: .8rem; }
+
+  .callout { border-left: 3px solid var(--accent); padding: .6rem .9rem; margin: .9rem 0; background: var(--tile); max-width: 82ch; font-size: .92rem; }
+  .callout .k { display: block; font: 500 .68rem/1.4 "IBM Plex Mono", Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .25rem; }
   .callout.gotcha { background: var(--gotcha); border-left-color: var(--gotcha-edge); }
-  .callout.simplified { background: var(--simpl); border-left-color: var(--simpl-edge); }
   .callout.verify { background: var(--verify); border-left-color: var(--verify-edge); }
-  ol.path { padding-left: 1.4rem; max-width: 76ch; }
-  ol.path li { margin: .45rem 0; }
+
+  details { border: 1px solid var(--rule); background: var(--card); padding: .5rem .9rem; margin: .9rem 0; max-width: 84ch; }
+  summary { cursor: pointer; font-weight: 600; font-size: .9rem; }
+  details p, details li { font-size: .92rem; }
+  ol.path { padding-left: 1.3rem; }
+  ol.path li { margin: .35rem 0; }
 
   /* shell */
-  header.top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: .75rem; }
-  header.top .sha { font: .75rem ui-monospace, Menlo, monospace; color: var(--muted); }
-  nav.levels { display: flex; gap: .25rem; margin: .9rem 0 1.25rem; flex-wrap: wrap; }
-  nav.levels a { font: 500 .82rem/1 ui-monospace, Menlo, monospace; letter-spacing: .04em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding: .55rem .8rem; border: 1px solid var(--rule); background: var(--card); }
+  header.top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: .6rem; }
+  header.top .sha { font: .74rem "IBM Plex Mono", Menlo, monospace; color: var(--muted); }
+  nav.levels { display: flex; gap: .25rem; margin: .8rem 0 1rem; flex-wrap: wrap; }
+  nav.levels a { font: 500 .78rem/1 "IBM Plex Mono", Menlo, monospace; letter-spacing: .04em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding: .5rem .75rem; border: 1px solid var(--rule); background: var(--card); }
   nav.levels a.active { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
   nav.levels a:focus-visible, .card:focus-visible, .pager a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .badge { display: inline-block; font: 500 .7rem/1.6 ui-monospace, Menlo, monospace; color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 .45rem; white-space: nowrap; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; margin: 1rem 0; }
-  .card { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--rule); padding: .9rem 1rem; }
+  .badge { display: inline-block; font: 500 .68rem/1.6 "IBM Plex Mono", Menlo, monospace; color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 .4rem; white-space: nowrap; vertical-align: middle; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: .7rem; margin: 1rem 0; }
+  .card { display: flex; flex-direction: column; gap: .35rem; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--rule); padding: .8rem .95rem; }
   .card:hover { background: var(--card-hover); }
-  .card .t { font-weight: 600; font-size: 1.02rem; line-height: 1.3; }
-  .card .h { color: var(--muted); font-size: .86rem; line-height: 1.45; flex: 1; }
+  .card .t { font-weight: 600; font-size: .98rem; line-height: 1.3; }
+  .card .h { color: var(--muted); font-size: .84rem; line-height: 1.4; flex: 1; }
+  .card .fn { font: .72rem/1.5 "IBM Plex Mono", Menlo, monospace; color: var(--accent); word-break: break-word; }
   .card .row { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
-  .card .n { font: 500 .72rem ui-monospace, Menlo, monospace; color: var(--accent); letter-spacing: .06em; }
+  .card .n { font: 500 .7rem "IBM Plex Mono", Menlo, monospace; color: var(--accent); letter-spacing: .06em; }
   .card.done .n::after { content: " ✓"; color: var(--done); }
-  .crumb { font-size: .82rem; color: var(--muted); margin: 0 0 .25rem; }
+  .crumb { font-size: .8rem; color: var(--muted); margin: 0; }
   .crumb a { color: var(--muted); }
-  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
-  .pager a { text-decoration: none; border: 1px solid var(--rule); background: var(--card); padding: .6rem .9rem; font-size: .9rem; color: inherit; }
-  .pager a small { display: block; font: .7rem ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: .9rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .pager a { text-decoration: none; border: 1px solid var(--rule); background: var(--card); padding: .55rem .85rem; font-size: .88rem; color: inherit; }
+  .pager a:hover { background: var(--card-hover); }
+  .pager a small { display: block; font: .68rem "IBM Plex Mono", Menlo, monospace; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
   .page { display: none; }
   .page.active { display: block; }
-  .hub-intro { max-width: 72ch; color: var(--muted); }
-  .tools { font-size: .8rem; color: var(--muted); margin-top: 2rem; }
+  .hub-intro { max-width: 78ch; color: var(--muted); }
+  .tools { font-size: .78rem; color: var(--muted); margin-top: 2rem; }
   .tools button { font: inherit; color: var(--link); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
-  .home-meta { display: grid; grid-template-columns: max-content 1fr; gap: .25rem 1rem; font-size: .9rem; color: var(--muted); margin: 1rem 0 1.5rem; }
-  .home-meta dt { font-family: ui-monospace, Menlo, monospace; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; }
-  .home-meta dd { margin: 0; }
 </style>
 
 <main>
@@ -86,109 +118,116 @@
   <a href="#/" data-level="home">Start</a>
   <a href="#/high" data-level="high">1 · High</a>
   <a href="#/mid" data-level="mid">2 · Mid</a>
+  <a href="#/traces" data-level="traces">Traces</a>
   <a href="#/low" data-level="low">3 · Low</a>
   <a href="#/map" data-level="map">Where to look</a>
 </nav>
 
-<!-- HOME: purpose, branch, how to read, one card per level (fill counts/minutes from reading_time.py) -->
+<!-- HOME: answer line, the whole system as a 4–6 tile strip, one card per tab -->
 <section class="page" data-route="/" data-level="home">
-  <h2>Start here</h2>
-  <p>One paragraph: what this subsystem does and what the reader can do after reading.</p>
-  <dl class="home-meta">
-    <dt>Branch</dt><dd><code>BRANCH @ SHORT-SHA</code></dd>
-    <dt>File</dt><dd><code>path/to/PrimaryFile</code> unless another file is named. Line numbers appear as <code>(~N)</code> and drift; function names don't.</dd>
-    <dt>Verified</dt><dd>Every function named was read on this branch on DATE.</dd>
-    <dt>How to read</dt><dd>Each level is a set of cards; open one, read it, come back. A ✓ marks what you've opened (this browser only). Every card is under 5 minutes.</dd>
-  </dl>
-  <div class="grid">
-    <a class="card" href="#/high"><span class="n">LEVEL 1</span><span class="t">High — the whole thing in one flow</span><span class="h">Pieces, state model, spine, key insights.</span><span class="row"><span></span><span class="badge">N min · N cards</span></span></a>
-    <a class="card" href="#/mid"><span class="n">LEVEL 2</span><span class="t">Mid — scenarios, function by function</span><span class="h">One card per scenario the reader will meet.</span><span class="row"><span></span><span class="badge">N min · N cards</span></span></a>
-    <a class="card" href="#/low"><span class="n">LEVEL 3</span><span class="t">Low — exact mechanisms</span><span class="h">Annotated excerpts and field tables.</span><span class="row"><span></span><span class="badge">N min · N cards</span></span></a>
-    <a class="card" href="#/map"><span class="n">REFERENCE</span><span class="t">Where to look</span><span class="h">Symptom → first function → log string.</span><span class="row"><span></span><span class="badge">N min</span></span></a>
+  <h2>Start</h2>
+  <p class="answer"><b>What this is:</b> one sentence.</p>
+  <div class="flow">
+    <div class="st"><span class="n">1</span><span class="f">Step</span><span class="d">one clause</span></div><span class="arrow">→</span>
+    <div class="st"><span class="n">2</span><span class="f">Step</span><span class="d">one clause</span></div>
   </div>
+  <div class="grid">
+    <a class="card" href="#/high"><span class="n">LEVEL 1</span><span class="t">High</span><span class="h">Pieces, lifecycle, grouped state, facts to carry.</span><span class="row"><span></span><span class="badge">4 cards</span></span></a>
+    <a class="card" href="#/mid"><span class="n">LEVEL 2</span><span class="t">Mid — mechanisms</span><span class="h">One card per function chain.</span><span class="row"><span></span><span class="badge">N cards</span></span></a>
+    <a class="card" href="#/traces"><span class="n">WORKED</span><span class="t">Traces</span><span class="h">Real situations run through the mechanisms.</span><span class="row"><span></span><span class="badge">N cards</span></span></a>
+    <a class="card" href="#/low"><span class="n">LEVEL 3</span><span class="t">Low — code</span><span class="h">One function per card.</span><span class="row"><span></span><span class="badge">N cards</span></span></a>
+    <a class="card" href="#/map"><span class="n">REFERENCE</span><span class="t">Where to look</span><span class="h">Symptom → function → log string.</span><span class="row"><span></span><span class="badge">1 table</span></span></a>
+  </div>
+  <p class="hub-intro">Branch, verification date, line-number caveat.</p>
 </section>
 
-<!-- HUBS: cards are generated from the <article> metadata below; edit only the intro line. -->
-<section class="page" data-route="/high" data-level="high" data-hub="high">
-  <h2>High — the whole thing in one flow</h2>
-  <p class="hub-intro">One line on what this level lets the reader do.</p>
-  <div class="grid" data-cards></div>
-</section>
-<section class="page" data-route="/mid" data-level="mid" data-hub="mid">
-  <h2>Mid — scenarios, function by function</h2>
-  <p class="hub-intro">Each scenario: actor action → what crossed the boundary → system state.</p>
-  <div class="grid" data-cards></div>
-</section>
-<section class="page" data-route="/low" data-level="low" data-hub="low">
-  <h2>Low — exact mechanisms</h2>
-  <p class="hub-intro">One mechanism per card. Each says which mid step it serves.</p>
-  <div class="grid" data-cards></div>
-</section>
+<!-- HUBS: cards are generated from <article> metadata; edit only the intro line -->
+<section class="page" data-route="/high" data-level="high" data-hub="high"><h2>High</h2><p class="hub-intro">Four cards, in order.</p><div class="grid" data-cards></div></section>
+<section class="page" data-route="/mid" data-level="mid" data-hub="mid"><h2>Mid — mechanisms</h2><p class="hub-intro">One mechanism per card: flow first, table, narrative folded.</p><div class="grid" data-cards></div></section>
+<section class="page" data-route="/traces" data-level="traces" data-hub="traces"><h2>Traces</h2><p class="hub-intro">Real situations run through the mechanisms.</p><div class="grid" data-cards></div></section>
+<section class="page" data-route="/low" data-level="low" data-hub="low"><h2>Low — code</h2><p class="hub-intro">One function per card.</p><div class="grid" data-cards></div></section>
 
-<!-- CARDS: one <article> per section. Required attributes:
-       data-route="/<level>/<slug>"  data-level="high|mid|low"
-       data-title="Card title"  data-hook="One-line hook shown on the hub"  data-min="N"
-     The heading, breadcrumb and prev/next are injected from these. Cross-link cards with href="#/low/<slug>". -->
-<article class="page" data-route="/high/pieces" data-level="high" data-title="The pieces" data-hook="Components, threads, boundaries, who initiates." data-min="3">
-  <div class="scroll"><table>
-    <tr><th>Piece</th><th>Direction</th><th>Purpose</th></tr>
-    <tr><td></td><td></td><td></td></tr>
-  </table></div>
+<!-- CARDS. Required attrs: data-route="/<level>/<slug>" data-level="high|mid|traces|low"
+     data-title  data-fn (the function chain, shown as subtitle)  data-hook  data-min
+     Every card: .answer → .flow (or mermaid) → table → <details>Narrative</details>. -->
+<article class="page" data-route="/high/pieces" data-level="high" data-title="The pieces" data-fn="Class · threads · ports · seam" data-hook="Who talks to whom, and who initiates." data-min="2">
+  <p class="answer"><b>One sentence.</b></p>
   <figure><pre class="mermaid">
 flowchart LR
-  A[Client] -->|request| B[Service]
-  </pre><figcaption><strong>Notice:</strong> …</figcaption></figure>
+  A["Client"] -->|request| B["Service"]
+  </pre><figcaption>Notice: …</figcaption></figure>
+  <div class="scroll"><table><tr><th>Piece</th><th>Owner</th><th>Does</th></tr><tr><td></td><td></td><td></td></tr></table></div>
+  <details><summary>Why it's built this way</summary><p></p></details>
 </article>
-<article class="page" data-route="/high/state" data-level="high" data-title="The state model" data-hook="Every field that defines what the system thinks is true." data-min="3">
-  <div class="scroll"><table><tr><th>State</th><th>Meaning</th></tr><tr><td></td><td></td></tr></table></div>
+<article class="page" data-route="/high/lifecycle" data-level="high" data-title="The lifecycle" data-fn="StateA → StateB → StateC" data-hook="The states the code names." data-min="2">
+  <p class="answer"><b>One sentence.</b></p>
+  <div class="flow">
+    <div class="st"><span class="n">STATE</span><span class="f">Function</span><span class="d">what is true here</span></div><span class="arrow">→</span>
+    <div class="st stop"><span class="n">END</span><span class="f">Function</span><span class="d">how it leaves</span></div>
+  </div>
+  <figure><pre class="mermaid">
+stateDiagram-v2
+  [*] --> A
+  A --> B : condition
+  </pre></figure>
+  <div class="callout gotcha"><span class="k">The transition people get wrong</span> …</div>
 </article>
-<article class="page" data-route="/high/insights" data-level="high" data-title="Key insights" data-hook="The 2–4 facts that make the mid level make sense." data-min="2">
-  <div class="callout"><span class="k">Insight 1</span> …</div>
+<article class="page" data-route="/high/state" data-level="high" data-title="The state, grouped" data-fn="field groups" data-hook="Each box answers one question." data-min="3">
+  <p class="answer"><b>One sentence.</b></p>
+  <div class="boxes">
+    <div class="box"><div class="t">Question this group answers</div><ul><li><code>field</code> — meaning</li></ul></div>
+  </div>
 </article>
-<article class="page" data-route="/high/spine" data-level="high" data-title="The spine" data-hook="The one loop / lifecycle everything hangs off." data-min="3">
-  <ol class="path"><li></li></ol>
-  <div class="callout simplified"><span class="k">What I simplified at this level</span> …</div>
+<article class="page" data-route="/high/insights" data-level="high" data-title="Facts to carry" data-fn="2–4 insights" data-hook="If you remember nothing else." data-min="1">
+  <div class="boxes"><div class="box"><div class="t">1 · Fact</div><ul><li>bullet</li><li><a href="#/mid/x">mechanism →</a></li></ul></div></div>
 </article>
 
-<article class="page" data-route="/mid/s1" data-level="mid" data-title="1 · SCENARIO" data-hook="…" data-min="3">
-  <p><strong>Trigger.</strong> Actor action → what crossed the boundary.</p>
-  <p><strong>Path.</strong></p>
-  <ol class="path"><li><code>Function</code> — what, condition, state touched. <a href="#/low/x">exact →</a></li></ol>
+<article class="page" data-route="/mid/x" data-level="mid" data-title="Mechanism name" data-fn="FunctionA → FunctionB → FunctionC" data-hook="One line." data-min="2">
+  <p class="answer"><b>One sentence.</b></p>
+  <div class="flow">
+    <div class="st"><span class="n">1</span><span class="f">FunctionA</span><span class="d">one clause</span></div><span class="arrow">→</span>
+    <div class="st"><span class="n">2</span><span class="f">FunctionB</span><span class="d">one clause</span></div><span class="arrow">→</span>
+    <div class="st alt"><span class="n">3a</span><span class="f">branch</span><span class="d">…</span></div>
+    <div class="st alt"><span class="n">3b</span><span class="f">branch</span><span class="d">…</span></div>
+  </div>
+  <div class="scroll"><table><tr><th>Function</th><th>Line</th><th>Does</th><th>Reads</th><th>Writes</th></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table></div>
+  <details><summary>Narrative</summary><p></p></details>
+  <p><a href="#/low/x">code →</a></p>
+</article>
+
+<article class="page" data-route="/traces/x" data-level="traces" data-title="Situation" data-fn="mechanism → mechanism" data-hook="One line." data-min="2">
+  <p class="answer"><b>Actor:</b> … <b>Wire:</b> … Mechanisms: <a href="#/mid/x">x</a>.</p>
   <figure><pre class="mermaid">
 sequenceDiagram
   participant C as Client
   participant S as Service
   C->>S: message
-  </pre><figcaption><strong>Notice:</strong> …</figcaption></figure>
-  <div class="scroll"><table><tr><th>Field</th><th>Before</th><th>After</th><th>Now causes</th></tr><tr><td></td><td></td><td></td><td></td></tr></table></div>
-  <div class="callout gotcha"><span class="k">Gotcha</span> …</div>
+  </pre></figure>
+  <div class="scroll"><table><tr><th>Field</th><th>Before</th><th>After</th><th>So</th></tr><tr><td></td><td></td><td></td><td></td></tr></table></div>
 </article>
 
-<article class="page" data-route="/low/x" data-level="low" data-title="Mechanism — TITLE" data-hook="Which function, annotated." data-min="2">
-  <p>Serves: <a href="#/mid/s1">Scenario 1, step N</a>.</p>
-  <pre><code>// File::Function (~line, volatile) — annotate WHY</code></pre>
-  <div class="callout verify"><span class="k">Verify</span> Claims sourced from a comment/ticket rather than executing code.</div>
+<article class="page" data-route="/low/x" data-level="low" data-title="FunctionName" data-fn="~line" data-hook="One line." data-min="2">
+  <p class="answer">Serves <a href="#/mid/x">mechanism</a>.</p>
+  <pre><code>// trimmed, real; comments say WHY</code></pre>
+  <div class="callout verify"><span class="k">Verify</span> Claims from a comment/ticket rather than executing code.</div>
 </article>
 
-<!-- MAP -->
 <section class="page" data-route="/map" data-level="map">
   <h2>Where to look</h2>
-  <div class="scroll"><table>
-    <tr><th>Symptom / question</th><th>First function to open</th><th>Log string to grep</th></tr>
-    <tr><td></td><td><code></code></td><td><code></code></td></tr>
-  </table></div>
+  <p class="answer">Symptom → first function to open → string to grep.</p>
+  <div class="scroll"><table><tr><th>Symptom</th><th>Open</th><th>Grep</th><th>Card</th></tr><tr><td></td><td><code></code></td><td><code></code></td><td><a href="#/mid/x">x</a></td></tr></table></div>
 </section>
 
-<p class="tools">Progress marks live in this browser only. <button type="button" id="resetdone">Clear ✓ marks</button></p>
+<p class="tools">✓ marks live in this browser only. <button type="button" id="resetdone">Clear ✓ marks</button></p>
 </main>
 
 <script>
 (function () {
   const pages = Array.from(document.querySelectorAll('.page'));
   const byRoute = new Map(pages.map(p => [p.dataset.route, p]));
-  const levelNames = { high: 'Level 1 · High', mid: 'Level 2 · Mid', low: 'Level 3 · Low' };
-  const nextLevel = { high: ['#/mid', 'Mid — scenarios'], mid: ['#/low', 'Low — exact mechanisms'], low: ['#/map', 'Where to look'] };
-  const KEY = document.title.replace(/\s+/g, '-').toLowerCase() + '.done';
+  const levelNames = { high: 'High', mid: 'Mid — mechanisms', traces: 'Traces', low: 'Low — code' };
+  const nextLevel = { high: ['#/mid', 'Mid — mechanisms'], mid: ['#/traces', 'Traces'], traces: ['#/low', 'Low — code'], low: ['#/map', 'Where to look'] };
+  const KEY = document.title.replace(/\\s+/g,'-').toLowerCase() + '.done';
   let done = new Set();
   try { done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
   const saveDone = () => { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} };
@@ -202,7 +241,7 @@ sequenceDiagram
         const card = document.createElement('a');
         card.className = 'card' + (done.has(a.dataset.route) ? ' done' : '');
         card.href = '#' + a.dataset.route;
-        card.innerHTML = `<span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${a.dataset.title}</span><span class="h">${a.dataset.hook}</span><span class="row"><span></span><span class="badge">${a.dataset.min} min</span></span>`;
+        card.innerHTML = `<span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${a.dataset.title}</span><span class="fn">${a.dataset.fn || ''}</span><span class="h">${a.dataset.hook}</span><span class="row"><span></span><span class="badge">${a.dataset.min} min</span></span>`;
         box.appendChild(card);
       });
     });
@@ -210,13 +249,13 @@ sequenceDiagram
   pages.filter(p => p.tagName === 'ARTICLE').forEach(a => {
     const lvl = a.dataset.level, sibs = articles(lvl), i = sibs.indexOf(a), prev = sibs[i - 1], next = sibs[i + 1];
     const head = document.createElement('div');
-    head.innerHTML = `<p class="crumb"><a href="#/${lvl}">${levelNames[lvl]}</a> · ${i + 1} of ${sibs.length}</p><h2>${a.dataset.title} <span class="badge">${a.dataset.min} min</span></h2>`;
+    head.innerHTML = `<p class="crumb"><a href="#/${lvl}">${levelNames[lvl]}</a> · ${i + 1} of ${sibs.length}</p><h2>${a.dataset.title} <span class="badge">${a.dataset.min} min</span></h2>` + (a.dataset.fn ? `<p class="crumb mono">${a.dataset.fn}</p>` : '');
     a.prepend(head);
     const pager = document.createElement('nav');
     pager.className = 'pager';
     pager.innerHTML =
       (prev ? `<a href="#${prev.dataset.route}"><small>← previous</small>${prev.dataset.title}</a>` : `<a href="#/${lvl}"><small>← back</small>${levelNames[lvl]} cards</a>`) +
-      (next ? `<a href="#${next.dataset.route}"><small>next →</small>${next.dataset.title}</a>` : `<a href="${nextLevel[lvl][0]}"><small>next level →</small>${nextLevel[lvl][1]}</a>`);
+      (next ? `<a href="#${next.dataset.route}"><small>next →</small>${next.dataset.title}</a>` : `<a href="${nextLevel[lvl][0]}"><small>next →</small>${nextLevel[lvl][1]}</a>`);
     a.appendChild(pager);
   });
   function route() {
