@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "operational-understanding",
+  "description": "Understand a system well enough to navigate it cold, before you change it.",
+  "owner": {
+    "name": "Wesley Myers"
+  },
+  "plugins": [
+    {
+      "name": "operational-understanding",
+      "description": "Three-level operational walkthrough → blog-style Artifact with diagrams and a navigation map.",
+      "source": "./",
+      "category": "learning"
+    }
+  ]
+}

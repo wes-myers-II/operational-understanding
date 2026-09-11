@@ -1,0 +1,8 @@
+{
+  "name": "operational-understanding",
+  "version": "0.1.0",
+  "description": "Three-level (high / mid / low) operational walkthroughs of a subsystem, published as a blog-style Artifact with diagrams, reading-time budgets, and a symptom → function → log-string navigation map.",
+  "author": {
+    "name": "Wesley Myers"
+  }
+}
