@@ -227,7 +227,7 @@ sequenceDiagram
   const byRoute = new Map(pages.map(p => [p.dataset.route, p]));
   const levelNames = { high: 'High', mid: 'Mid — mechanisms', traces: 'Traces', low: 'Low — code' };
   const nextLevel = { high: ['#/mid', 'Mid — mechanisms'], mid: ['#/traces', 'Traces'], traces: ['#/low', 'Low — code'], low: ['#/map', 'Where to look'] };
-  const KEY = document.title.replace(/\\s+/g,'-').toLowerCase() + '.done';
+  const KEY = document.title.replace(/\s+/g,'-').toLowerCase() + '.done';
   let done = new Set();
   try { done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
   const saveDone = () => { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} };
