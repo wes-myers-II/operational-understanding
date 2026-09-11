@@ -46,16 +46,29 @@ def main() -> int:
     args = ap.parse_args()
     text = open(args.path, encoding="utf-8").read()
 
-    parts = re.split(r"(?=<h[23]\b)", text)
+    # Drill-down layout: one card per <article data-level data-title>. Fall back to <h2>/<h3>
+    # splitting for the single-page layout.
+    text = re.sub(r"<(style|script)\b.*?</\1>", " ", text, flags=re.S)
+    if re.search(r"<article[^>]*data-title=", text):
+        parts = re.split(r'(?=<article\b|<section[^>]*data-route="/map")', text)
+    else:
+        parts = re.split(r"(?=<h[23]\b)", text)
     over = False
     level_totals: dict[str, float] = {}
     current_level = "front-matter"
     grand = 0.0
     for part in parts:
+        card = re.match(r'<article[^>]*data-level="([^"]+)"[^>]*data-title="([^"]*)"', part)
         m = re.match(r"<h([23])[^>]*>(.*?)</h\1>", part, re.S)
-        title = strip_tags(m.group(2)).strip() if m else "(front matter)"
-        if m and m.group(1) == "2":
-            current_level = title
+        if card:
+            current_level = card.group(1)
+            title = html.unescape(card.group(2))
+        elif part.startswith("<section") and 'data-route="/map"' in part:
+            current_level = title = "map"
+        else:
+            title = strip_tags(m.group(2)).strip() if m else "(front matter)"
+            if m and m.group(1) == "2":
+                current_level = title
         mins = estimate(part)
         grand += mins
         level_totals[current_level] = level_totals.get(current_level, 0.0) + mins

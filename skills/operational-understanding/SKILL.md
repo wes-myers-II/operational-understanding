@@ -80,9 +80,15 @@ stating what to notice.
 ### 4. Build and publish the artifact
 
 1. Load the `artifact-design` skill (mandatory before writing any artifact).
-2. Start from `templates/blog.html`. Fill: title, one-sentence purpose, branch/worktree, total
-   reading time, TOC, the three levels, navigation map, "what changed / what this replaces" if
-   the topic is being redesigned.
+2. Start from `templates/drilldown.html` (default). It is a one-screen-at-a-time app: a Start
+   page, one hub of cards per level, one `<article>` card per section with breadcrumb and
+   prev/next injected, hash routes (`#/mid/s4`) so any card is linkable, and a ✓ on cards the
+   reader has opened. The reader isolates one piece, reads it, and comes back — never a single
+   long scroll. Fill: title, purpose, branch/worktree, the cards (each `<article>` needs
+   `data-route`, `data-level`, `data-title`, `data-hook`, `data-min`), the map, and "what this
+   replaces" if the topic is being redesigned. Cross-link cards with `href="#/low/<slug>"`.
+   `templates/blog.html` is the single-page fallback for when the user asks for one scrollable
+   document.
 3. Run `scripts/reading_time.py <file.html>` and paste the numbers into the badges. Re-split any
    section over the limit.
 4. Publish with the Artifact tool. Title = the subsystem name (e.g. "Session Layer",
