@@ -53,12 +53,36 @@ this order, no exceptions:
 Prose outside the fold is limited to the answer line, captions, and callouts. If a page needs
 a paragraph to be understood, the strip is wrong; fix the strip.
 
-## Mid level — "mechanisms"
+## Mid level — "mechanisms, grounded in the code"
 
-Answer: which functions run, in what order, reading/writing which state. The unit is the
+Answer: which functions run, in what order, reading/writing which state — shown with the
+**real code**, so the reader can open the file and recognize it. The unit is the
 **mechanism** — one function chain that does one job (the main loop, getting connected,
 identifying a sender, dispatching, replying, streaming, handoff, teardown). One card per
 mechanism; the card's subtitle is the chain itself (`A → B → C`).
+
+Every mid card, in order:
+1. Answer line.
+2. **Where block**: file · function signature · line · called from · calls. This is the
+   reader's map into the source; it is the most important element on the card.
+3. **The real function body, trimmed** to its decisions, with the author's notes as
+   `// ←` comments in a distinct color. Paraphrased pseudo-flow is not a substitute:
+   readers who know the code recognize real code and distrust paraphrase.
+4. Table: callee → line → reads → writes, or field → before → after.
+5. Prose only in callouts or folded.
+
+Mid level total may exceed the 20-minute budget when the excess is code; keep each card
+under 5 minutes.
+
+## Language rules (from reader feedback)
+
+- Say what a thing **is**. Do not define by negation ("this is not an X") — especially when
+  the reader may not know X. If a framework term is needed, define it in one clause the first
+  time it appears ("an ATK Node — the framework's unit that owns ROS2 publishers").
+- Say obvious things plainly. Subtlety that the reader must infer is a defect.
+- A diagram earns its place only when a table cannot show the same thing. Prefer the code
+  excerpt, then the table, then the diagram. Three or four diagrams in a whole artifact is
+  typical.
 
 Scenarios are **not** the load-bearing structure. They live in a separate **Traces** tab: a
 real situation run through the mechanisms — actor, wire, sequence diagram, state table — each
