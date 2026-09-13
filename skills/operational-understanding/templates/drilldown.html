@@ -175,6 +175,22 @@ flowchart LR
 </article>
 <article class="page" data-route="/high/parts" data-level="high" data-title="The parts" data-fn="PART · PART · PART · PART" data-hook="Each part: job, in, out, functions, state." data-min="4">
   <p class="answer"><b>One sentence.</b></p>
+  <figure><pre class="mermaid">
+flowchart LR
+  A["actor"]
+  subgraph F["focus component"]
+    direction LR
+    P1["<b>1 PART</b>"]
+    P2["<b>2 PART</b>"]
+    P3["<b>3 PART</b>"]
+  end
+  B["black box"]
+  A -- "one edge per path, lanes that do not cross" --> P1
+  P1 --> P2
+  P2 --> B
+  B --> P3
+  P3 --> A
+  </pre><figcaption>Name the lanes here. The strips below are the legend.</figcaption></figure>
   <h3>The paths an outside actor can take — one row per thing it can do</h3>
   <div class="paths">
     <div class="pathrow"><div class="lbl">Do X<small>one clause</small></div>

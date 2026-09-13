@@ -22,12 +22,13 @@ processes/modules, edges are the transport between them (protocol, topic, file).
 explicitly what this subsystem is responsible for and what is a black box; for each black box,
 what it accepts, returns, and reports. A table: component → kind → responsible for.
 
-**The parts.** First, **one path strip per thing an outside actor can do** (become the
-driver, send a command, get the answer, stream, receive status, change who is connected,
-leave, …): each strip reads left to right — actor → part → function → part → … → black box or
-back to the actor. Strips replace a single graph of the parts, which tangles as soon as there
-are more than three paths. Then one table: part → job → in → out → functions it contains →
-state it owns. Function and member names appear here so Mid attaches to them; nothing about
+**The parts.** One diagram of the parts with **one edge per path**, laid out in lanes so paths
+do not cross (e.g. a "getting connected" lane, a "command in / answer out" lane, a "changing
+who is connected" lane); the caption names the lanes. Under it, **one path strip per thing an
+outside actor can do** (become the driver, send a command, get the answer, stream, receive
+status, change who is connected, leave, …), each reading left to right — actor → part →
+function → part → … → black box or back to the actor — as the legend for the diagram. Then one
+table: part → job → in → out → functions it contains → state it owns. Function and member names appear here so Mid attaches to them; nothing about
 how they work. Close with "what reaches in from outside, by part".
 
 Detail level: far things get one line ("RTC acts on request topics and publishes replies");
