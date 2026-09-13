@@ -44,7 +44,7 @@
   .eyebrow { font-family: "IBM Plex Mono", Menlo, monospace; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
   .answer { font-size: 1.02rem; margin: 0 0 .75rem; max-width: 86ch; }
   .anchor { font-family: "IBM Plex Mono", Menlo, monospace; font-size: .78rem; color: var(--accent); }
-  /* part chips: the same six names at every level */
+  /* part chips: the same names at every level */
   .part { display: inline-block; font: 500 .74rem/1.6 "IBM Plex Sans", sans-serif; padding: 0 .5rem; border-radius: 3px; border: 1px solid var(--rule); white-space: nowrap; color: var(--fg); text-decoration: none; }
   .part.pL { background: var(--pL); border-style: dashed; } .part.p1 { background: var(--p1); } .part.p2 { background: var(--p2); }
   .part.p3 { background: var(--p3); } .part.p4 { background: var(--p4); } .part.p5 { background: var(--p5); }
@@ -131,7 +131,8 @@
   figure .zoom:hover { background: var(--card-hover); }
   #lightbox { position: fixed; inset: 0; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
   #lightbox.open { display: flex; }
-  #lightbox .bar { display: flex; justify-content: space-between; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
+  #lightbox .bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: .6rem 1rem; border-bottom: 1px solid var(--rule); font-size: .85rem; color: var(--muted); line-height: 1.45; }
+  #lightbox .bar span { max-width: 110ch; }
   #lightbox .bar button { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .8rem; cursor: pointer; }
   #lightbox .body { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 1rem; cursor: zoom-out; }
   #lightbox .body svg { width: 96vw; height: auto; max-width: none; max-height: 86vh; }
@@ -350,22 +351,39 @@
     const rowH = []; for (let r = 0; r < d.rows; r++) { const hs = d.nodes.filter(n => n.row === r).map(n => n.h); rowH[r] = (hs.length ? Math.max(...hs) : 30) + 46; }
     const headers = d.cols.map(c => wrap(c.label, Math.floor((colW - 24) / CW.h))); const headH = 16 + Math.max(...headers.map(h => h.length)) * 14;
     const top = headH + 34, rowY = []; let y = top; for (let r = 0; r < d.rows; r++) { rowY[r] = y; y += rowH[r]; }
-    const gridBottom = y, returns = d.edges.filter(e => N[e.to].col < N[e.from].col);
-    const W = left * 2 + d.cols.length * colW, H = gridBottom + 12 + returns.length * 28 + 8;
+    const gridBottom = y;
+    const fwd = d.edges.filter(e => N[e.to].col > N[e.from].col), ret = d.edges.filter(e => N[e.to].col < N[e.from].col), down = d.edges.filter(e => N[e.to].col === N[e.from].col);
+    const W = left * 2 + d.cols.length * colW, H = gridBottom + 12 + ret.length * 28 + 8;
     const nx = n => left + n.col * colW + gap / 2, ny = n => rowY[n.row] + 12, cx = n => nx(n) + nodeW / 2, cy = n => ny(n) + n.h / 2;
     let out = '';
     d.cols.forEach((c, i) => { out += `<rect class="dg-col" x="${left + i * colW + 4}" y="${8}" width="${colW - 8}" height="${H - 16}"/>`; out += tspans(left + i * colW + colW / 2, 8 + headH / 2 + 4, headers[i], 'dg-collabel'); });
     (d.frames || []).forEach(f => { const x = left + f.col * colW + 10, y0 = rowY[f.rowFrom] - 14, y1 = rowY[f.rowTo] + rowH[f.rowTo] - 10;
       out += `<rect class="dg-frame" x="${x}" y="${y0}" width="${colW - 20}" height="${y1 - y0}" rx="4"/>`; out += tspans(x + 8, y0 + 13, wrap(f.label, Math.floor((colW - 36) / CW.e)), 'dg-framelabel', 'start', 13); });
-    let lane = 0;
-    d.edges.forEach(e => { const a = N[e.from], b = N[e.to]; let path, label = '';
-      if (b.col > a.col) { const x1 = nx(a) + nodeW, x2 = nx(b), y1 = cy(a), y2 = cy(b), xm = x1 + gap / 2; path = `M${x1},${y1} H${xm} V${y2} H${x2}`;
-        if (e.label) label = tspans(xm, y1 - 8 - (wrap(e.label, edgeChars).length - 1) * 6, wrap(e.label, edgeChars), 'dg-elabel', 'middle', 12); }
-      else if (b.col === a.col) { const x = cx(a), y1 = ny(a) + a.h, y2 = ny(b); path = `M${x},${y1} V${y2}`;
-        if (e.label) label = tspans(x + 8, (y1 + y2) / 2, wrap(e.label, Math.floor((nodeW / 2 + gap / 2 - 12) / CW.e)), 'dg-elabel', 'start', 12); }
-      else { lane++; const yl = gridBottom + lane * 28 - 8, x1 = cx(a), x2 = cx(b); path = `M${x1},${ny(a) + a.h} V${yl} H${x2} V${ny(b) + b.h}`;
-        if (e.label) label = tspans((x1 + x2) / 2, yl - 8, wrap(e.label, 60), 'dg-elabel', 'middle', 12); }
-      out += `<path class="dg-edge${b.col < a.col ? ' dg-ret' : ''}" d="${path}" marker-end="url(#dga)"/>` + label; });
+    // forward edges: fan out departures from the same box, land on the target's left side, label on the segment unique to the edge
+    const outIdx = {}, inIdx = {};
+    fwd.forEach(e => { outIdx[e.from] = (outIdx[e.from] || 0) + 1; inIdx[e.to] = (inIdx[e.to] || 0) + 1; });
+    const outSeen = {}, inSeen = {};
+    fwd.forEach(e => { const a = N[e.from], b = N[e.to];
+      const k = outSeen[e.from] = (outSeen[e.from] || 0), nOut = outIdx[e.from]; outSeen[e.from]++;
+      const j = inSeen[e.to] = (inSeen[e.to] || 0), nIn = inIdx[e.to]; inSeen[e.to]++;
+      const y1 = cy(a) + (k - (nOut - 1) / 2) * 14, y2 = cy(b) + (j - (nIn - 1) / 2) * 14;
+      const x1 = nx(a) + nodeW, x2 = nx(b), xm = x1 + gap * (0.5 + (k - (nOut - 1) / 2) * 0.22);
+      const path = `M${x1},${y1} H${xm} V${y2} H${x2}`;
+      out += `<path class="dg-edge" d="${path}" marker-end="url(#dga)"/>`;
+      if (e.label) { const lines = wrap(e.label, edgeChars); const lx = y1 === y2 ? (x1 + x2) / 2 : (xm + x2) / 2; out += tspans(lx, y2 - 9 - (lines.length - 1) * 6, lines, 'dg-elabel', 'middle', 12); } });
+    // same-column edges: straight down the center, label to the right
+    down.forEach(e => { const a = N[e.from], b = N[e.to], x = cx(a), y1 = ny(a) + a.h, y2 = ny(b);
+      out += `<path class="dg-edge" d="M${x},${y1} V${y2}" marker-end="url(#dga)"/>`;
+      if (e.label) out += tspans(x + 8, (y1 + y2) / 2, wrap(e.label, Math.floor((nodeW / 2 + gap / 2 - 12) / CW.e)), 'dg-elabel', 'start', 12); });
+    // return edges: leave the source's right side into a gutter, run along a bottom lane, climb the gutter LEFT of the target's column, enter the target's left side
+    const retIn = {}; ret.forEach(e => { retIn[e.to] = (retIn[e.to] || 0) + 1; }); const retSeen = {};
+    ret.forEach((e, lane) => { const a = N[e.from], b = N[e.to];
+      const j = retSeen[e.to] = (retSeen[e.to] || 0); retSeen[e.to]++;
+      const gx1 = nx(a) + nodeW + 12 + lane * 8, gx2 = nx(b) - 14 - lane * 8, yl = gridBottom + 20 + lane * 28;
+      const y1 = cy(a) + 10 + lane * 6, y2 = cy(b) + (j - (retIn[e.to] - 1) / 2) * 14;
+      const path = `M${nx(a) + nodeW},${y1} H${gx1} V${yl} H${gx2} V${y2} H${nx(b)}`;
+      out += `<path class="dg-edge dg-ret" d="${path}" marker-end="url(#dga)"/>`;
+      if (e.label) out += tspans((gx1 + gx2) / 2, yl - 8, wrap(e.label, 70), 'dg-elabel', 'middle', 12); });
     d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${n.black ? ';stroke-dasharray:4 3' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
     return svgWrap(W, H, out, 'dga');
   }
@@ -419,7 +437,7 @@
   function openLb(fig) {
     const svg = fig.querySelector('svg'); if (!svg) return;
     const cap = fig.querySelector('figcaption');
-    document.getElementById('lbcap').textContent = cap ? cap.textContent.slice(0, 200) : '';
+    document.getElementById('lbcap').textContent = cap ? cap.textContent : '';
     const clone = svg.cloneNode(true); clone.removeAttribute('style'); clone.removeAttribute('width'); clone.removeAttribute('height');
     document.getElementById('lbbody').appendChild(clone);
     lb.classList.add('open');

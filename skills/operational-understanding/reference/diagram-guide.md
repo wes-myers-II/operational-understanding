@@ -62,9 +62,19 @@ The engine wraps labels to the box and sizes rows, columns and steps from the wr
 Keep labels short anyway; put explanation in the caption. A single word longer than ~26
 characters will not fit a node — shorten it or split it.
 
+## How the engine routes edges (so specs stay readable)
+
+- Forward edges (to a column further right) leave the source's right side and enter the
+  target's left side. Several departures from one box fan out vertically; several arrivals into
+  one box fan in. An elbow edge's label sits on the segment that belongs only to that edge.
+- Same-column edges run straight down the column center with the label to the right.
+- Return edges (to a column further left) leave the source's right side into a gutter beside
+  the column, run along a dashed lane below the grid, climb the gutter left of the target's
+  column, and enter the target's left side — never through another box.
+
 ## Verify before publishing
 
-Extract `renderArch`/`renderSeq` from the page and run them over every spec in node: assert no
-`<text>` lands outside the viewBox and no node line exceeds the node width. Also assert the
-page's main `<script>` block contains no literal `</script>` — a JS comment mentioning one will
-terminate the block and print the rest of the script as page text.
+Run `scripts/diagram_check.py <file.html>` (node required). It fails on text outside the
+viewBox, a node line wider than its box, an edge segment passing through a box, or a literal
+`</script>` inside the page's main script block (a JS comment mentioning one terminates the
+block and the rest of the script prints as page text).

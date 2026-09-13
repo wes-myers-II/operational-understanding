@@ -101,9 +101,9 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
    `data-route="/map"`. Part chips are `<span class="part pN">`.
 3. Diagrams are JSON specs inside `<figure class="diagset">` rendered by the template's engine
    (`arch` grid and `seq` templates — see `reference/diagram-guide.md`). Never Mermaid, never
-   auto-layout. Before publishing, extract `renderArch`/`renderSeq` and run them over every spec
-   in node: no text outside the viewBox, no node line over the node width. Also confirm the main
-   `<script>` block contains no literal `</script>`.
+   auto-layout. Before publishing run `scripts/diagram_check.py <file.html>` (needs node): it
+   fails on text outside the viewBox, a node line wider than its box, an edge passing through a
+   box, or a literal `</script>` inside the main script block.
 4. Run `scripts/reading_time.py <file.html>`; every card under 5 minutes; fill `data-min`.
 5. Publish with the Artifact tool. Title = the subsystem's name. Favicon on first publish.
 6. On revision, redeploy the same file path.
