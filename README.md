@@ -25,12 +25,12 @@ It produces understanding, not changes. Use it before you redesign something you
 
 As a plugin (recommended — gets updates):
 
-    /plugin marketplace add GITHUB_OWNER/operational-understanding
+    /plugin marketplace add wes-myers-II/operational-understanding
     /plugin install operational-understanding@operational-understanding
 
 Or copy the skill directly:
 
-    git clone https://github.com/GITHUB_OWNER/operational-understanding.git
+    git clone https://github.com/wes-myers-II/operational-understanding.git
     cp -R operational-understanding/skills/operational-understanding ~/.claude/skills/
 
 Or vendor it into one project so teammates get it with the checkout:
