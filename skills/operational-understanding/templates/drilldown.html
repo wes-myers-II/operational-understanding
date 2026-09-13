@@ -34,7 +34,6 @@
   pre code { background: none; padding: 0; font-size: inherit; }
   pre .c { color: var(--note); }
   pre .om { color: var(--muted); font-style: italic; }
-  pre.mermaid { background: var(--card); border: 1px solid var(--rule); padding: .5rem; font-size: .85rem; }
   figure { margin: .75rem 0 1rem; }
   figcaption { color: var(--muted); font-size: .84rem; margin-top: .35rem; }
   .scroll { overflow-x: auto; }
@@ -124,9 +123,8 @@
   .strip .fnn { font: .74rem "IBM Plex Mono", Menlo, monospace; color: var(--accent); white-space: nowrap; }
 
   /* click any diagram to view it full screen; Esc, click, or the × closes it */
-  pre.mermaid { cursor: zoom-in; position: relative; }
   figure.zoomable { position: relative; }
-  figure.zoomable .mermaid, figure.zoomable svg { cursor: zoom-in; }
+  figure.zoomable svg { cursor: zoom-in; }
   figure .zoom { font: 500 .74rem "IBM Plex Sans", sans-serif; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .7rem; cursor: pointer; margin-top: .4rem; }
   figure .zoom:hover { background: var(--card-hover); }
   #lightbox { position: fixed; inset: 0; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
@@ -446,7 +444,7 @@
     lb.classList.add('open');
   }
   document.querySelectorAll('figure').forEach(fig => {
-    if (!fig.querySelector('.mermaid, svg')) return;
+    if (!fig.querySelector('svg')) return;
     fig.classList.add('zoomable');
     fig.addEventListener('click', e => { if (e.target.closest('.zoom')) { openLb(fig); return; } if (e.target.closest('figcaption, .dg-pick, .dg-nav, button')) return; openLb(fig); });
   });

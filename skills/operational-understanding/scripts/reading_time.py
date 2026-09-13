@@ -21,11 +21,9 @@ def strip_tags(s: str) -> str:
 
 
 def estimate(block: str) -> float:
-    code = re.findall(r"<pre(?![^>]*class=\"mermaid\")[^>]*>(.*?)</pre>", block, re.S)
+    code = re.findall(r"<pre[^>]*>(.*?)</pre>", block, re.S)
     code_words = sum(len(strip_tags(c).split()) for c in code)
-    diagrams = len(re.findall(r"<pre[^>]*class=\"mermaid\"", block)) + len(
-        re.findall(r"<svg\b", block)
-    )
+    diagrams = len(re.findall(r'<figure class="diagset"', block)) + len(re.findall(r"<svg\b", block))
     tables = len(re.findall(r"<table\b", block))
     prose_only = re.sub(r"<pre.*?</pre>", " ", block, flags=re.S)
     prose_only = re.sub(r"<svg.*?</svg>", " ", prose_only, flags=re.S)
