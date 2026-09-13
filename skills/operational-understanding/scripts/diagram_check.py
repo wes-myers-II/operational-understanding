@@ -28,6 +28,9 @@ for (const set of specs) for (const sp of set) { const svg = sp.type === 'seq' ?
 for (const set of specs) for (const sp of set) if (sp.type !== 'seq') { const svg = renderArch(sp); const segs=[];
   for (const m of svg.matchAll(/<path class="dg-edge[^"]*" d="([^"]+)"/g)) { const cmds=[...m[1].matchAll(/([MHV])([\\d.-]+)(?:,([\\d.-]+))?/g)]; let x=0,y=0; for (const c of cmds) { if (c[1]==='M'){x=+c[2];y=+c[3];} else if (c[1]==='H'){x=+c[2];} else { segs.push([x, Math.min(y,+c[2]), Math.max(y,+c[2]), m[1]]); y=+c[2]; } } }
   for (let i=0;i<segs.length;i++) for (let j=i+1;j<segs.length;j++) { const [x1,a1,b1,p1]=segs[i],[x2,a2,b2,p2]=segs[j]; if (p1!==p2 && Math.abs(x1-x2)<3 && Math.min(b1,b2)-Math.max(a1,a2)>4) { bad++; console.log('COINCIDENT-VERTICAL', sp.title, x1); } } }
+for (const set of specs) for (const sp of set) if (sp.type !== 'seq') { const svg = renderArch(sp); const H=[], V=[];
+  for (const m of svg.matchAll(/<path class="(dg-edge[^"]*)" d="([^"]+)"/g)) { const solid = !m[1].includes('dg-ret'); const cmds=[...m[2].matchAll(/([MHV])([\\d.-]+)(?:,([\\d.-]+))?/g)]; let x=0,y=0; for (const c of cmds) { if (c[1]==='M'){x=+c[2];y=+c[3];} else if (c[1]==='H'){ H.push([Math.min(x,+c[2]),Math.max(x,+c[2]),y,m[2],solid]); x=+c[2]; } else { V.push([x,Math.min(y,+c[2]),Math.max(y,+c[2]),m[2],solid]); y=+c[2]; } } }
+  for (const [hx1,hx2,hy,hp,hs] of H) for (const [vx,vy1,vy2,vp,vs] of V) if (hp!==vp && hs && vs && vx>hx1+2 && vx<hx2-2 && hy>vy1+2 && hy<vy2-2) { bad++; console.log('SOLID-CROSSING', sp.title, 'at', vx, hy); } }
 console.log('diagrams', n, 'problems', bad); process.exit(bad ? 1 : 0);
 """ % json.dumps(specs)
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:

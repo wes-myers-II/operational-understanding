@@ -361,6 +361,8 @@
     const outIdx = {}, inIdx = {};
     fwd.forEach(e => { outIdx[e.from] = (outIdx[e.from] || 0) + 1; inIdx[e.to] = (inIdx[e.to] || 0) + 1; });
     const outSeen = {}, inSeen = {};
+    // departures from one box are ordered by target row (higher target leaves higher) so an elbow's vertical never crosses a sibling's horizontal
+    fwd.sort((e1, e2) => (N[e1.from].row - N[e2.from].row) || (N[e1.to].row - N[e2.to].row) || (N[e1.to].col - N[e2.to].col));
     fwd.forEach(e => { const a = N[e.from], b = N[e.to];
       const k = outSeen[e.from] = (outSeen[e.from] || 0), nOut = outIdx[e.from]; outSeen[e.from]++;
       const j = inSeen[e.to] = (inSeen[e.to] || 0), nIn = inIdx[e.to]; inSeen[e.to]++;
@@ -377,11 +379,16 @@
       out += `<path class="dg-edge" d="M${x},${y1} V${y2}" marker-end="url(#dga)"/>`;
       if (e.label) out += tspans(x + 8, (y1 + y2) / 2, wrap(e.label, Math.floor((nodeW / 2 + gap / 2 - 12) / CW.e)), 'dg-elabel', 'start', 12); });
     // return edges: leave the source's right side into a gutter, run along a bottom lane, climb the gutter LEFT of the target's column, enter the target's left side
-    const retIn = {}; ret.forEach(e => { retIn[e.to] = (retIn[e.to] || 0) + 1; }); const retSeen = {};
+    // returns: narrow spans get the lanes nearest the grid so a wider lane's verticals fall outside them; departures spread inside the box height; the departure gutter stays inside the column
+    ret.sort((e1, e2) => Math.abs(N[e1.from].col - N[e1.to].col) - Math.abs(N[e2.from].col - N[e2.to].col));
+    const retIn = {}, retOut = {}; ret.forEach(e => { retIn[e.to] = (retIn[e.to] || 0) + 1; retOut[e.from] = (retOut[e.from] || 0) + 1; }); const retSeen = {}, retOutSeen = {};
     ret.forEach((e, lane) => { const a = N[e.from], b = N[e.to];
       const j = retSeen[e.to] = (retSeen[e.to] || 0); retSeen[e.to]++;
-      const gx1 = nx(a) + nodeW + gap * 0.84 + lane * 5, gx2 = nx(b) - gap * 0.38 + lane * 5, yl = gridBottom + 20 + lane * 28;   // departure band · arrival band
-      const y1 = cy(a) + 10 + lane * 6, y2 = cy(b) + (j - (retIn[e.to] - 1) / 2) * 14;
+      const k = retOutSeen[e.from] = (retOutSeen[e.from] || 0); retOutSeen[e.from]++;
+      // departure gutter: the band past the next column boundary; in the last column there is no next band, so use the column's own right padding
+      const lastCol = a.col === d.cols.length - 1;
+      const gx1 = lastCol ? nx(a) + nodeW + 14 + lane * 5 : nx(a) + nodeW + gap * 0.84 + lane * 5, gx2 = nx(b) - gap * 0.38 + lane * 5, yl = gridBottom + 20 + lane * 28;
+      const y1 = ny(a) + a.h * (k + 1) / (retOut[e.from] + 1), y2 = cy(b) + (j - (retIn[e.to] - 1) / 2) * 14;
       const path = `M${nx(a) + nodeW},${y1} H${gx1} V${yl} H${gx2} V${y2} H${nx(b)}`;
       out += `<path class="dg-edge dg-ret" d="${path}" marker-end="url(#dga)"/>`;
       if (e.label) out += tspans((gx1 + gx2) / 2, yl - 8, wrap(e.label, 70), 'dg-elabel', 'middle', 12); });

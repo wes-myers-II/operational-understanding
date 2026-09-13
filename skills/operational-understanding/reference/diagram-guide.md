@@ -17,7 +17,9 @@ Answers: *where does each thing live, and what moves between them?*
 - **A container is a frame, never a box.** A loop or scheduler that runs the parts is drawn as
   a dashed frame around them with its label ("The loop — one pass runs 1 → 2 → 3").
 - **Edges go right or down.** A return (to an earlier column) is routed along the bottom as a
-  dashed lane. Two edges may never cross; if a picture needs a crossing, it is two diagrams.
+  dashed lane. Solid edges never cross each other; a dashed return may cross a solid edge only
+  at a right angle; no two edges run coincident; no edge passes through a box. If two solid
+  edges would cross, it is two diagrams.
 - **Edge labels say what moves and over what** ("command · 5555", "reply · kRequestReplyTopic").
 - Black boxes get `"black": true` (dashed border). Parts get `"part": N` for their color;
   the container gets `"part": "L"`.
