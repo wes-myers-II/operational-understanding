@@ -1,7 +1,7 @@
 {
   "name": "operational-understanding",
-  "version": "0.1.0",
-  "description": "Three-level (high / mid / low) operational walkthroughs of a subsystem, published as a blog-style Artifact with diagrams, reading-time budgets, and a symptom → function → log-string navigation map.",
+  "version": "0.2.0",
+  "description": "Operational understanding of any subsystem, feature, or flow: a drill-down Artifact with a fixed vocabulary of named parts carried through Plain, High (the world and black boxes), Mid (file + function + chunk), Low (verbatim code beside plain English), Principles, Traces, and a symptom → part → function → log-string map. Asks pointed questions when the repo cannot answer.",
   "author": {
     "name": "Wesley Myers"
   }
