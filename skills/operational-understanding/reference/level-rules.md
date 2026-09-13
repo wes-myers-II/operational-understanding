@@ -22,8 +22,11 @@ processes/modules, edges are the transport between them (protocol, topic, file).
 explicitly what this subsystem is responsible for and what is a black box; for each black box,
 what it accepts, returns, and reports. A table: component → kind → responsible for.
 
-**The parts.** One diagram of the parts and how data moves between them (dotted for "calls
-every cycle", solid for data). One table: part → job → in → out → functions it contains →
+**The parts.** First, **one path strip per thing an outside actor can do** (become the
+driver, send a command, get the answer, stream, receive status, change who is connected,
+leave, …): each strip reads left to right — actor → part → function → part → … → black box or
+back to the actor. Strips replace a single graph of the parts, which tangles as soon as there
+are more than three paths. Then one table: part → job → in → out → functions it contains →
 state it owns. Function and member names appear here so Mid attaches to them; nothing about
 how they work. Close with "what reaches in from outside, by part".
 
