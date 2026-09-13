@@ -367,10 +367,13 @@
       const k = outSeen[e.from] = (outSeen[e.from] || 0), nOut = outIdx[e.from]; outSeen[e.from]++;
       const j = inSeen[e.to] = (inSeen[e.to] || 0), nIn = inIdx[e.to]; inSeen[e.to]++;
       const y1 = cy(a) + (k - (nOut - 1) / 2) * 14, y2 = cy(b) + (j - (nIn - 1) / 2) * 14;
-      const x1 = nx(a) + nodeW, x2 = nx(b), xm = x1 + gap * (0.5 + (k - (nOut - 1) / 2) * 0.22);
+      // the gap between columns is split into bands so edge kinds never share an x: forward elbows 0.30–0.55, return arrivals 0.62–0.78, return departures 0.84–0.96
+      const x1 = nx(a) + nodeW, x2 = nx(b), xm = x1 + gap * (0.42 + (k - (nOut - 1) / 2) * 0.12);
       const path = `M${x1},${y1} H${xm} V${y2} H${x2}`;
       out += `<path class="dg-edge" d="${path}" marker-end="url(#dga)"/>`;
-      if (e.label) { const lines = wrap(e.label, edgeChars); const lx = y1 === y2 ? (x1 + x2) / 2 : (xm + x2) / 2; out += tspans(lx, y2 - 9 - (lines.length - 1) * 6, lines, 'dg-elabel', 'middle', 12); } });
+      if (e.label) { const lines = wrap(e.label, edgeChars + 6);
+        if (y1 === y2) out += tspans((x1 + x2) / 2, y1 - 9 - (lines.length - 1) * 6, lines, 'dg-elabel', 'middle', 12);
+        else out += tspans(x2 - 6, y2 - 9 - (lines.length - 1) * 6, lines, 'dg-elabel', 'end', 12); } });
     // same-column edges: straight down the center, label to the right
     down.forEach(e => { const a = N[e.from], b = N[e.to], x = cx(a), y1 = ny(a) + a.h, y2 = ny(b);
       out += `<path class="dg-edge" d="M${x},${y1} V${y2}" marker-end="url(#dga)"/>`;
@@ -379,7 +382,7 @@
     const retIn = {}; ret.forEach(e => { retIn[e.to] = (retIn[e.to] || 0) + 1; }); const retSeen = {};
     ret.forEach((e, lane) => { const a = N[e.from], b = N[e.to];
       const j = retSeen[e.to] = (retSeen[e.to] || 0); retSeen[e.to]++;
-      const gx1 = nx(a) + nodeW + 12 + lane * 8, gx2 = nx(b) - 14 - lane * 8, yl = gridBottom + 20 + lane * 28;
+      const gx1 = nx(a) + nodeW + gap * 0.84 + lane * 5, gx2 = nx(b) - gap * 0.38 + lane * 5, yl = gridBottom + 20 + lane * 28;   // departure band · arrival band
       const y1 = cy(a) + 10 + lane * 6, y2 = cy(b) + (j - (retIn[e.to] - 1) / 2) * 14;
       const path = `M${nx(a) + nodeW},${y1} H${gx1} V${yl} H${gx2} V${y2} H${nx(b)}`;
       out += `<path class="dg-edge dg-ret" d="${path}" marker-end="url(#dga)"/>`;

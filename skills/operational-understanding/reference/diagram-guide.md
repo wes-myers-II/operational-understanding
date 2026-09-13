@@ -71,6 +71,9 @@ characters will not fit a node — shorten it or split it.
 - Return edges (to a column further left) leave the source's right side into a gutter beside
   the column, run along a dashed lane below the grid, climb the gutter left of the target's
   column, and enter the target's left side — never through another box.
+- The gap between two columns is split into three bands so edge kinds never share an x:
+  forward elbows (30–55 % of the gap), return arrivals (62–78 %), return departures (84–96 %).
+  Elbow labels end just before the target box rather than centering on a short segment.
 
 ## Verify before publishing
 
