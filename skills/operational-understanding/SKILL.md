@@ -92,7 +92,7 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 
 1. Load the `artifact-design` skill (mandatory before writing any artifact).
 2. Start from `templates/drilldown.html`. It is a one-screen-at-a-time app with hash routes,
-   level tabs, generated hub cards, prev/next, part chips, and ✓ marks. Each `<article>` needs
+   level tabs, generated hub cards, prev/next, part chips, ✓ marks, and click-to-fullscreen on every diagram (Esc or click closes). Each `<article>` needs
    `data-route`, `data-level` (`high|mid|low|traces`), `data-title`, `data-fn`, `data-hook`,
    `data-min`. Principles and Where-to-look are `<section>`s with `data-route="/why"` and
    `data-route="/map"`. Part chips are `<span class="part pN">`.
