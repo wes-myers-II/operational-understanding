@@ -19,7 +19,9 @@ detail to a name they already know. If a level needs a noun the other levels don
 part list is wrong; fix the list.
 
 The number of parts is the number of jobs the code actually does, never a number chosen to fill
-a level. Too many parts makes reading a chore; too few hides a job.
+a level. Too many parts makes reading a chore; too few hides a job. Number the parts in the
+order data meets them; a container that runs them (a loop, a scheduler) is unnumbered and is
+drawn as the frame around them.
 
 ## 1. Scope and research
 
@@ -83,8 +85,9 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
   Cuts are marked on their own line: `// … 6 lines omitted: what they do`. Author notes are
   `// ←` comments in a distinct color and are the only non-source text in a code block.
 - **Code appears at Low**, and at Mid only when a function's shape is the explanation.
-- **A diagram earns its place only when a table cannot show the same thing.** Two or three
-  per artifact is typical: the world, the parts, maybe one sequence in Traces.
+- **Diagrams come from two templates only** — the architecture grid and the sequence — built by
+  the engine from declared positions. One question per diagram; one figure slot per card with a
+  picker. See `reference/diagram-guide.md`.
 - **Simplify at the right layer.** Mid should make a part feel as simple as it is. Black boxes
   stay black; the reader is told what crosses the boundary, never what happens inside.
 
@@ -96,9 +99,14 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
    `data-route`, `data-level` (`high|mid|low|traces`), `data-title`, `data-fn`, `data-hook`,
    `data-min`. Principles and Where-to-look are `<section>`s with `data-route="/why"` and
    `data-route="/map"`. Part chips are `<span class="part pN">`.
-3. Run `scripts/reading_time.py <file.html>`; every card under 5 minutes; fill `data-min`.
-4. Publish with the Artifact tool. Title = the subsystem's name. Favicon on first publish.
-5. On revision, redeploy the same file path.
+3. Diagrams are JSON specs inside `<figure class="diagset">` rendered by the template's engine
+   (`arch` grid and `seq` templates — see `reference/diagram-guide.md`). Never Mermaid, never
+   auto-layout. Before publishing, extract `renderArch`/`renderSeq` and run them over every spec
+   in node: no text outside the viewBox, no node line over the node width. Also confirm the main
+   `<script>` block contains no literal `</script>`.
+4. Run `scripts/reading_time.py <file.html>`; every card under 5 minutes; fill `data-min`.
+5. Publish with the Artifact tool. Title = the subsystem's name. Favicon on first publish.
+6. On revision, redeploy the same file path.
 
 ## 5. Quality gate
 

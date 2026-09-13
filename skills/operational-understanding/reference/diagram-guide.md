@@ -1,61 +1,70 @@
 # Diagram guide
 
-A diagram earns its place only when a table cannot show the same thing. Two or three per
-artifact is typical. Every diagram gets a one-line caption saying what to notice.
+Diagrams are built by the template's engine from JSON specs. **No auto-layout, ever**: every
+box has a declared column and row. Two diagram templates cover everything; each answers one
+question; a card holds one figure slot with a picker (buttons + prev/next + full screen) so a
+page never shows more than one diagram at a time.
 
-## Where diagrams belong
+## Template 1 — architecture grid (`"type": "arch"`)
 
-| Tab | Diagram | What it shows |
-|---|---|---|
-| High · the world | one `flowchart` | processes / modules / outside programs as boxes; the transport between them (protocol, topic, file) on the edges; black boxes labeled as such |
-| High · the parts | one `flowchart` | the named parts as boxes; dotted edges for "called every cycle", solid edges for data moving; where outside data enters |
-| Traces | at most one `sequenceDiagram`, only where ordering across two passes or two parties is the point | the actors and the parts, with `Note over` for the moments between events (dialed but not yet registered; a transaction spanning two passes); `alt/else` for the branch; dashed arrows for stragglers |
-| Mid, Low, Principles, Where to look | none by default | a chunk map, a step list, or a table does the job |
+Answers: *where does each thing live, and what moves between them?*
 
-If you are about to draw a fourth diagram, ask what table it replaces. If it replaces none, it
-is decoration.
+- **Columns are locations**, declared left → right by distance from the actor: outside the
+  system · the process holding the focus · the bridge · the black boxes. The same columns on
+  every arch diagram in the artifact.
+- **Rows are path order**: row 0 is where data enters; each part sits in the row it is first
+  reached. Parts are **numbered in this order**, so the numbers read top to bottom.
+- **A container is a frame, never a box.** A loop or scheduler that runs the parts is drawn as
+  a dashed frame around them with its label ("The loop — one pass runs 1 → 2 → 3").
+- **Edges go right or down.** A return (to an earlier column) is routed along the bottom as a
+  dashed lane. Two edges may never cross; if a picture needs a crossing, it is two diagrams.
+- **Edge labels say what moves and over what** ("command · 5555", "reply · kRequestReplyTopic").
+- Black boxes get `"black": true` (dashed border). Parts get `"part": N` for their color;
+  the container gets `"part": "L"`.
 
-## Rules
-
-- **Regions first, one level deep.** Wrap nodes in subgraphs named for *where they run* —
-  outside the system, the process holding the focus, the bridge, the black boxes — declared in
-  left-to-right order. Never nest subgraphs: Mermaid clips edges at the outer box, so a line
-  from outside appears to stop at the region instead of reaching the part.
-- **Edges from outside name their destination part** in the label ("command on 5555 → 3"),
-  so the reader never has to trace a line across the picture to learn where it lands.
-- **One line per label.** Many Mermaid hosts strip `<br/>` and `<b>`; a two-line label renders
-  as one run-together word. Keep labels short and plain; put detail in the caption.
-- **Every diagram is click-to-fullscreen** (the template wires it); still keep it legible small.
-
-- Nodes are the same names used in the text: part names on the parts diagram, component and
-  process names on the world diagram, function names in a sequence. Never a paraphrase.
-- Edge labels are the real transport or the real condition, copied from the code where there is
-  one.
-- Six participants and fifteen messages is the ceiling for a sequence; split or drop it past that.
-- Both themes must stay legible; Mermaid's default theme is fine in Artifacts.
-
-## Backend
-
-Mermaid, in a `<pre class="mermaid">` block. Artifacts render it natively; no library, no CDN.
-
-```html
-<pre class="mermaid">
-flowchart LR
-  subgraph OUT["Outside"]
-    C["client program"]
-  end
-  subgraph SVC["service process"]
-    F["<b>focus component</b>"]
-    B["bridge"]
-  end
-  D["downstream (black box)"]
-  C -- "protocol / port" --> F
-  F --> B
-  B -- "topic" --> D
-  D -- "reply topic" --> B
-</pre>
+```json
+{"title":"Location of the parts","type":"arch","rows":3,"caption":"…",
+ "cols":[{"label":"Outside"},{"label":"FOCUS"},{"label":"Bridge"},{"label":"Black box"}],
+ "frames":[{"label":"CONTAINER — one pass runs 1 → 2 → 3","col":1,"rowFrom":0,"rowTo":2}],
+ "nodes":[{"id":"a","col":0,"row":1,"label":"actor"},{"id":"p1","col":1,"row":0,"label":"1 PART","part":1}],
+ "edges":[{"from":"a","to":"p1","label":"input · transport"}]}
 ```
 
-Inline SVG is acceptable for the world diagram when layout carries meaning that Mermaid cannot
-express (which thread owns which socket, for example); load the `artifact-diagramming` skill
-first. Treat anything else (Excalidraw, external renderers) as an experiment the user opts into.
+## Template 2 — sequence (`"type": "seq"`)
+
+Answers: *for one thing an actor can do, what happens in what order?*
+
+- **Columns are the actors and parts**, in the same order and colors as the arch grid.
+- **Rows are steps in time**, numbered. An arrow is a hand-off; a box on a column is work
+  inside that part, labeled with the function and what it decides.
+- **A loop back is visible**: a later row whose arrow points to an earlier column.
+- One sequence per path (become the driver, send a command, get the answer, …). Never merge
+  paths into one sequence.
+
+```json
+{"title":"Do X","type":"seq","caption":"…",
+ "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"x","label":"black box","black":true}],
+ "steps":[{"from":"a","to":"p1","label":"input · transport"},{"from":"p1","to":"p1","label":"Function: decision"},{"from":"p1","to":"x","label":"output"}]}
+```
+
+## Where they go
+
+| Card | Figure slot holds |
+|---|---|
+| High · where it sits | one arch: the world (processes, bridge, black boxes, transports) |
+| High · the parts | one arch (location of the parts) + one seq per path, in the same picker |
+| Traces | one seq per trace |
+| Mid / Low | none by default; a chunk map or table does the job |
+
+## Text fits, always
+
+The engine wraps labels to the box and sizes rows, columns and steps from the wrapped text.
+Keep labels short anyway; put explanation in the caption. A single word longer than ~26
+characters will not fit a node — shorten it or split it.
+
+## Verify before publishing
+
+Extract `renderArch`/`renderSeq` from the page and run them over every spec in node: assert no
+`<text>` lands outside the viewBox and no node line exceeds the node width. Also assert the
+page's main `<script>` block contains no literal `</script>` — a JS comment mentioning one will
+terminate the block and print the rest of the script as page text.

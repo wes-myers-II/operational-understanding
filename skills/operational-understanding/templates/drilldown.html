@@ -5,21 +5,21 @@
     --accent: #1f6f8b; --accent-ink: #ffffff; --tile: #e9f1f5; --tile-edge: #b9d3df;
     --gotcha: #f5ead6; --gotcha-edge: #b7742a; --verify: #f1eadb; --verify-edge: #9a7b2a;
     --code: #eef1f0; --link: #17627c; --done: #2e8b57; --note: #8a5a1c; --plain: #eef4ee; --plain-edge: #6f9a6f;
-    --p1: #d9e8f0; --p2: #e3ecdc; --p3: #efe3d6; --p4: #e8e0ef; --p5: #dfeceb; --p6: #f0e6da;
+    --pL: #ececec; --p1: #e3ecdc; --p2: #efe3d6; --p3: #e8e0ef; --p4: #dfeceb; --p5: #f0e6da;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --bg: #121518; --fg: #e4e7ea; --muted: #9aa5ae; --rule: #2a3138; --card: #191d21; --card-hover: #1f262c;
     --accent: #69b4d2; --accent-ink: #0e1418; --tile: #17242b; --tile-edge: #2d4a57;
     --gotcha: #2e2416; --gotcha-edge: #d29a4a; --verify: #2b2617; --verify-edge: #c9a24a;
     --code: #1c2126; --link: #7fc4de; --done: #5fbf85; --note: #e0a458; --plain: #182218; --plain-edge: #6fb06f;
-    --p1: #1b2a33; --p2: #1e2a1a; --p3: #2c2418; --p4: #261f2d; --p5: #1a2a29; --p6: #2c2519;
+    --pL: #23272b; --p1: #1e2a1a; --p2: #2c2418; --p3: #261f2d; --p4: #1a2a29; --p5: #2c2519;
   }}
   :root[data-theme="dark"] {
     --bg: #121518; --fg: #e4e7ea; --muted: #9aa5ae; --rule: #2a3138; --card: #191d21; --card-hover: #1f262c;
     --accent: #69b4d2; --accent-ink: #0e1418; --tile: #17242b; --tile-edge: #2d4a57;
     --gotcha: #2e2416; --gotcha-edge: #d29a4a; --verify: #2b2617; --verify-edge: #c9a24a;
     --code: #1c2126; --link: #7fc4de; --done: #5fbf85; --note: #e0a458; --plain: #182218; --plain-edge: #6fb06f;
-    --p1: #1b2a33; --p2: #1e2a1a; --p3: #2c2418; --p4: #261f2d; --p5: #1a2a29; --p6: #2c2519;
+    --pL: #23272b; --p1: #1e2a1a; --p2: #2c2418; --p3: #261f2d; --p4: #1a2a29; --p5: #2c2519;
   }
   body { background: var(--bg); color: var(--fg); font: 15px/1.55 "IBM Plex Sans", -apple-system, Segoe UI, sans-serif; }
   main { max-width: 1000px; margin: 0 auto; padding: 24px 24px 100px; }
@@ -46,8 +46,8 @@
   .anchor { font-family: "IBM Plex Mono", Menlo, monospace; font-size: .78rem; color: var(--accent); }
   /* part chips: the same six names at every level */
   .part { display: inline-block; font: 500 .74rem/1.6 "IBM Plex Sans", sans-serif; padding: 0 .5rem; border-radius: 3px; border: 1px solid var(--rule); white-space: nowrap; color: var(--fg); text-decoration: none; }
-  .part.p1 { background: var(--p1); } .part.p2 { background: var(--p2); } .part.p3 { background: var(--p3); }
-  .part.p4 { background: var(--p4); } .part.p5 { background: var(--p5); } .part.p6 { background: var(--p6); }
+  .part.pL { background: var(--pL); border-style: dashed; } .part.p1 { background: var(--p1); } .part.p2 { background: var(--p2); }
+  .part.p3 { background: var(--p3); } .part.p4 { background: var(--p4); } .part.p5 { background: var(--p5); }
   .partbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .6rem; margin: .5rem 0 1rem; }
   .partbar .levellinks { margin: 0; padding-left: .2rem; }
   .crumb.mono { margin: .1rem 0 .9rem; color: var(--accent); }
@@ -135,6 +135,29 @@
   #lightbox .bar button { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .8rem; cursor: pointer; }
   #lightbox .body { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 1rem; cursor: zoom-out; }
   #lightbox .body svg { width: 96vw; height: auto; max-width: none; max-height: 86vh; }
+
+  /* deterministic diagrams */
+  svg.dg { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--rule); }
+  .dg-col { fill: var(--bg); stroke: var(--rule); stroke-dasharray: 3 3; }
+  .dg-collabel { font: 600 11px "IBM Plex Mono", Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; fill: var(--muted); }
+  .dg-frame { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 6 3; }
+  .dg-framelabel { font: 600 11px "IBM Plex Sans", sans-serif; fill: var(--accent); }
+  .dg-node { stroke: var(--fg); stroke-opacity: .55; stroke-width: 1; }
+  .dg-nlabel { font: 500 12px "IBM Plex Sans", sans-serif; fill: var(--fg); }
+  .dg-edge { fill: none; stroke: var(--fg); stroke-opacity: .7; stroke-width: 1.2; }
+  .dg-ret { stroke-dasharray: 5 3; }
+  .dg-arrowhead { fill: var(--fg); fill-opacity: .7; }
+  .dg-elabel { font: 11px "IBM Plex Sans", sans-serif; fill: var(--fg); paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+  .dg-life { stroke: var(--rule); stroke-width: 1; }
+  .dg-note { fill: var(--tile); stroke: var(--tile-edge); }
+  .dg-stepno { font: 500 11px "IBM Plex Mono", Menlo, monospace; fill: var(--muted); }
+  .dg-pick { display: flex; flex-wrap: wrap; gap: .3rem; margin: .4rem 0 .5rem; }
+  .dg-pick button { font: 500 .74rem "IBM Plex Sans", sans-serif; color: var(--muted); background: var(--card); border: 1px solid var(--rule); padding: .3rem .6rem; cursor: pointer; }
+  .dg-pick button.active { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+  .dg-nav { display: flex; gap: .5rem; align-items: center; margin-top: .4rem; font-size: .78rem; color: var(--muted); }
+  .dg-nav button { font: 500 .74rem "IBM Plex Sans", sans-serif; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .7rem; cursor: pointer; }
+  figure.diagset .zoom { margin-left: auto; margin-top: 0; }
+  #lightbox .body svg.dg { border: 0; }
 </style>
 
 <main>
@@ -158,7 +181,7 @@
   <div class="plain"><p>Everyday words. Who the actors are, what this does for them, the two or three rules that make it behave as it does.</p></div>
   <h3>The parts — the same names on every level</h3>
   <div class="partbar">
-    <a class="part p1" href="#/high/parts">1 · PART</a><a class="part p2" href="#/high/parts">2 · PART</a><a class="part p3" href="#/high/parts">3 · PART</a><a class="part p4" href="#/high/parts">4 · PART</a>
+    <a class="part pL" href="#/high/parts">THE CONTAINER (e.g. the loop)</a><a class="part p1" href="#/high/parts">1 · PART</a><a class="part p2" href="#/high/parts">2 · PART</a><a class="part p3" href="#/high/parts">3 · PART</a>
   </div>
   <div class="grid">
     <a class="card" href="#/high"><span class="n">HIGH</span><span class="t">The world and the parts</span><span class="h">…</span><span class="row"><span></span><span class="badge">2 cards</span></span></a>
@@ -181,34 +204,26 @@
 <article class="page" data-route="/high/world" data-level="high" data-title="Where FOCUS sits in SYSTEM" data-fn="processes · modules · framework terms · outside programs" data-hook="…" data-min="3">
   <p class="answer"><b>One sentence.</b></p>
   <div class="boxes"><div class="box"><div class="t">Group</div><ul><li>…</li></ul></div></div>
-  <figure><pre class="mermaid">
-flowchart LR
-  A["outside program"] -- "transport" --> B["focus component"]
-  B -- "transport" --> C["black box"]
-  </pre><figcaption>What this subsystem is responsible for; what is a black box and what crosses its boundary.</figcaption></figure>
+  <figure class="diagset"><script type="application/json">[
+    {"title":"Where FOCUS sits","type":"arch","rows":2,"caption":"Columns are places, left = farthest from the focus. Edges are transports.",
+     "cols":[{"label":"Outside"},{"label":"Process holding the focus"},{"label":"Bridge"},{"label":"Black box"}],
+     "nodes":[{"id":"a","col":0,"row":0,"label":"outside actor"},{"id":"f","col":1,"row":0,"label":"FOCUS","part":"L"},{"id":"b","col":2,"row":0,"label":"bridge component"},{"id":"x","col":3,"row":0,"label":"black box","black":true}],
+     "edges":[{"from":"a","to":"f","label":"protocol · port"},{"from":"f","to":"b","label":"what moves"},{"from":"b","to":"x","label":"topic / call"},{"from":"x","to":"b","label":"reply"}]}
+  ]</script></figure>
   <div class="scroll"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td></td><td></td><td></td></tr></table></div>
 </article>
 <article class="page" data-route="/high/parts" data-level="high" data-title="What FOCUS does — N parts and the paths through them" data-fn="PART · PART · PART · PART" data-hook="Each part: job, in, out, functions, state." data-min="4">
   <p class="answer"><b>One sentence.</b></p>
-  <figure><pre class="mermaid">
-flowchart LR
-  A["actor"]
-  subgraph OUT["OUTSIDE"]
-    A2["other actor"]
-  end
-  subgraph F["PROCESS — focus component"]
-    direction LR
-    P1["1 PART"]
-    P2["2 PART"]
-    P3["3 PART"]
-  end
-  B["black box"]
-  A -- "one edge per path" --> P1
-  P1 --> P2
-  P2 --> B
-  B --> P3
-  P3 --> A
-  </pre><figcaption>Left to right = outside → the focus → the black boxes. Name the lanes here.</figcaption><button type="button" class="zoom">⤢ Full screen</button></figure>
+  <figure class="diagset"><script type="application/json">[
+    {"title":"Location of the parts","type":"arch","rows":3,"caption":"Rows = the order data meets the parts. Dashed frame = the container that runs them. Solid edges go right or down; dashed returns run along the bottom.",
+     "cols":[{"label":"Outside"},{"label":"FOCUS"},{"label":"Bridge"},{"label":"Black box"}],
+     "frames":[{"label":"CONTAINER — one pass runs 1 → 2 → 3","col":1,"rowFrom":0,"rowTo":2}],
+     "nodes":[{"id":"a","col":0,"row":1,"label":"actor"},{"id":"p1","col":1,"row":0,"label":"1 PART","part":1},{"id":"p2","col":1,"row":1,"label":"2 PART","part":2},{"id":"p3","col":1,"row":2,"label":"3 PART","part":3},{"id":"b","col":2,"row":1,"label":"bridge"},{"id":"x","col":3,"row":1,"label":"black box","black":true}],
+     "edges":[{"from":"a","to":"p2","label":"input"},{"from":"p2","to":"p3","label":"…"},{"from":"p3","to":"b","label":"output"},{"from":"b","to":"x","label":"…"},{"from":"p3","to":"a","label":"reply"}]},
+    {"title":"Do X (one path)","type":"seq","caption":"Columns = actors and parts; numbered rows = steps in time; a box on a column is work inside that part; a later row pointing left is a loop back.",
+     "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"p2","label":"2 PART","part":2},{"id":"b","label":"bridge"},{"id":"x","label":"black box","black":true}],
+     "steps":[{"from":"a","to":"p1","label":"input · transport"},{"from":"p1","to":"p1","label":"Function: what it decides"},{"from":"p1","to":"p2","label":"hand-off"},{"from":"p2","to":"b","label":"Function → output"},{"from":"b","to":"x","label":"…"},{"from":"x","to":"a","label":"reply"}]}
+  ]</script></figure>
   <h3>The paths an outside actor can take — one row per thing it can do</h3>
   <div class="paths">
     <div class="pathrow"><div class="lbl">Do X<small>one clause</small></div>
@@ -252,6 +267,7 @@ flowchart LR
 <!-- TRACES -->
 <article class="page" data-route="/traces/t1" data-level="traces" data-title="Situation" data-fn="parts 1 → 2 → 3" data-hook="…" data-min="2">
   <p class="answer"><b>Actor:</b> … <b>Wire:</b> …</p>
+  <figure class="diagset"><script type="application/json">[{"title":"Situation","type":"seq","caption":"…","cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1}],"steps":[{"from":"a","to":"p1","label":"…"}]}]</script></figure>
   <ol class="steps"><li><span class="a"><span class="part p1">1</span> <code>Function</code></span><span class="w">…</span></li></ol>
   <div class="scroll"><table><tr><th>After</th><th>Value</th><th>So</th></tr><tr><td></td><td></td><td></td></tr></table></div>
 </article>
@@ -270,7 +286,7 @@ flowchart LR
 (function () {
   const pages = Array.from(document.querySelectorAll('.page'));
   const byRoute = new Map(pages.map(p => [p.dataset.route, p]));
-  const levelNames = { high: 'High', mid: 'Mid', low: 'Low', traces: 'Traces' };
+  const levelNames = { high: 'High — where it sits', mid: 'Mid — inside each part', low: 'Low — the code', traces: 'Traces' };
   const nextLevel = { high: ['#/mid', 'Mid — inside each part'], mid: ['#/low', 'Low — the code'], low: ['#/why', 'Principles'], traces: ['#/map', 'Where to look'] };
   const KEY = document.title.replace(/\s+/g,'-').toLowerCase() + '.done';
   let done = new Set();
@@ -314,6 +330,84 @@ flowchart LR
   }
   document.getElementById('resetdone').addEventListener('click', () => { done.clear(); saveDone(); renderHubs(); });
 
+
+  // ---- deterministic diagrams: no auto-layout. Two templates: 'arch' (columns = locations, rows = path order)
+  //      and 'seq' (columns = actors/parts, rows = steps in time). Specs live in JSON blocks inside each figure.diagset.
+  const PART_FILL = { L:'var(--pL)', 1:'var(--p1)', 2:'var(--p2)', 3:'var(--p3)', 4:'var(--p4)', 5:'var(--p5)' };
+  const esc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const CW = { n: 6.7, e: 6.1, h: 6.6 };                 // px per char: node 12px, edge 11px, header 11px mono-ish
+  function wrap(text, maxChars) {                          // greedy word wrap; never emits a line longer than maxChars unless one word is
+    const out = []; String(text).split('\n').forEach(par => { let line = '';
+      par.split(' ').forEach(w => { if ((line + ' ' + w).trim().length > maxChars && line) { out.push(line); line = w; } else line = (line + ' ' + w).trim(); });
+      out.push(line); }); return out; }
+  function tspans(x, y, lines, cls, anchor, lh) { lh = lh || 14; const y0 = y - ((lines.length - 1) * lh) / 2;
+    return `<text class="${cls}" x="${x}" y="${y0}" text-anchor="${anchor || 'middle'}">` + lines.map((l, i) => `<tspan x="${x}" dy="${i ? lh : 0}">${esc(l)}</tspan>`).join('') + '</text>'; }
+  const svgWrap = (W, H, body, mid) => `<svg class="dg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><defs><marker id="${mid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="dg-arrowhead"/></marker></defs>${body}</svg>`;
+
+  function renderArch(d) {
+    const nodeW = 196, gap = 124, colW = nodeW + gap, left = 16, nodeChars = Math.floor((nodeW - 16) / CW.n), edgeChars = Math.floor((gap - 12) / CW.e);
+    const N = {}; d.nodes.forEach(n => { N[n.id] = n; n.lines = wrap(n.label, nodeChars); n.h = 16 + n.lines.length * 14; });
+    const rowH = []; for (let r = 0; r < d.rows; r++) { const hs = d.nodes.filter(n => n.row === r).map(n => n.h); rowH[r] = (hs.length ? Math.max(...hs) : 30) + 46; }
+    const headers = d.cols.map(c => wrap(c.label, Math.floor((colW - 24) / CW.h))); const headH = 16 + Math.max(...headers.map(h => h.length)) * 14;
+    const top = headH + 34, rowY = []; let y = top; for (let r = 0; r < d.rows; r++) { rowY[r] = y; y += rowH[r]; }
+    const gridBottom = y, returns = d.edges.filter(e => N[e.to].col < N[e.from].col);
+    const W = left * 2 + d.cols.length * colW, H = gridBottom + 12 + returns.length * 28 + 8;
+    const nx = n => left + n.col * colW + gap / 2, ny = n => rowY[n.row] + 12, cx = n => nx(n) + nodeW / 2, cy = n => ny(n) + n.h / 2;
+    let out = '';
+    d.cols.forEach((c, i) => { out += `<rect class="dg-col" x="${left + i * colW + 4}" y="${8}" width="${colW - 8}" height="${H - 16}"/>`; out += tspans(left + i * colW + colW / 2, 8 + headH / 2 + 4, headers[i], 'dg-collabel'); });
+    (d.frames || []).forEach(f => { const x = left + f.col * colW + 10, y0 = rowY[f.rowFrom] - 14, y1 = rowY[f.rowTo] + rowH[f.rowTo] - 10;
+      out += `<rect class="dg-frame" x="${x}" y="${y0}" width="${colW - 20}" height="${y1 - y0}" rx="4"/>`; out += tspans(x + 8, y0 + 13, wrap(f.label, Math.floor((colW - 36) / CW.e)), 'dg-framelabel', 'start', 13); });
+    let lane = 0;
+    d.edges.forEach(e => { const a = N[e.from], b = N[e.to]; let path, label = '';
+      if (b.col > a.col) { const x1 = nx(a) + nodeW, x2 = nx(b), y1 = cy(a), y2 = cy(b), xm = x1 + gap / 2; path = `M${x1},${y1} H${xm} V${y2} H${x2}`;
+        if (e.label) label = tspans(xm, y1 - 8 - (wrap(e.label, edgeChars).length - 1) * 6, wrap(e.label, edgeChars), 'dg-elabel', 'middle', 12); }
+      else if (b.col === a.col) { const x = cx(a), y1 = ny(a) + a.h, y2 = ny(b); path = `M${x},${y1} V${y2}`;
+        if (e.label) label = tspans(x + 8, (y1 + y2) / 2, wrap(e.label, Math.floor((nodeW / 2 + gap / 2 - 12) / CW.e)), 'dg-elabel', 'start', 12); }
+      else { lane++; const yl = gridBottom + lane * 28 - 8, x1 = cx(a), x2 = cx(b); path = `M${x1},${ny(a) + a.h} V${yl} H${x2} V${ny(b) + b.h}`;
+        if (e.label) label = tspans((x1 + x2) / 2, yl - 8, wrap(e.label, 60), 'dg-elabel', 'middle', 12); }
+      out += `<path class="dg-edge${b.col < a.col ? ' dg-ret' : ''}" d="${path}" marker-end="url(#dga)"/>` + label; });
+    d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${n.black ? ';stroke-dasharray:4 3' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
+    return svgWrap(W, H, out, 'dga');
+  }
+
+  function renderSeq(d) {
+    const headers = d.cols.map(c => wrap(c.label, 18)); const hMax = Math.max(...headers.map(h => h.length));
+    const colW = Math.max(120, Math.min(170, 24 + Math.max(...headers.flat().map(l => l.length)) * CW.h)), headH = 14 + hMax * 14, left = 44;
+    const x = i => left + i * colW + colW / 2, idx = id => d.cols.findIndex(c => c.id === id);
+    const top = 16 + headH + 22; let y = top; const rows = d.steps.map(st => { const a = idx(st.from), b = idx(st.to);
+      const span = a === b ? colW - 40 : Math.max(colW - 30, Math.abs(x(a) - x(b)) - 20); const lines = wrap(st.label, Math.max(14, Math.floor(span / CW.e)));
+      const h = (a === b ? 14 : 10) + lines.length * 13 + 16; const row = { st, a, b, lines, y, h }; y += h; return row; });
+    const W = left + d.cols.length * colW + 16, H = y + 16;
+    let out = '';
+    d.cols.forEach((c, i) => { out += `<rect class="dg-node" x="${x(i) - colW / 2 + 8}" y="${16}" width="${colW - 16}" height="${headH}" rx="3" style="fill:${c.part != null ? PART_FILL[c.part] : 'var(--card)'}${c.black ? ';stroke-dasharray:4 3' : ''}"/>`;
+      out += tspans(x(i), 16 + headH / 2 + 4, headers[i], 'dg-nlabel'); out += `<line class="dg-life" x1="${x(i)}" y1="${16 + headH}" x2="${x(i)}" y2="${H - 12}"/>`; });
+    rows.forEach((r, i) => { const yArrow = r.y + r.h - 12, yText = r.y + 8 + (r.lines.length * 13) / 2;
+      out += tspans(16, yArrow + 4, [String(i + 1)], 'dg-stepno');
+      if (r.a === r.b) { out += `<rect class="dg-note" x="${x(r.a) - colW / 2 + 20}" y="${r.y + 2}" width="${colW - 40}" height="${r.h - 8}" rx="2"/>`; out += tspans(x(r.a), r.y + r.h / 2 + 2, r.lines, 'dg-elabel', 'middle', 13); }
+      else { const dir = r.b > r.a ? 1 : -1; out += `<path class="dg-edge${r.st.dashed ? ' dg-ret' : ''}" d="M${x(r.a) + dir * 6},${yArrow} H${x(r.b) - dir * 8}" marker-end="url(#dgs)"/>`; out += tspans((x(r.a) + x(r.b)) / 2, yText, r.lines, 'dg-elabel', 'middle', 13); } });
+    return svgWrap(W, H, out, 'dgs');
+  }
+  // a diagset: one figure slot with a picker of diagrams and prev/next; specs come from the JSON block inside the figure
+  document.querySelectorAll('figure.diagset').forEach(fig => {
+    const specs = JSON.parse(fig.querySelector('script[type="application/json"]').textContent);
+    let i = 0;
+    const pick = document.createElement('div'); pick.className = 'dg-pick';
+    const slot = document.createElement('div'); slot.className = 'dg-slot';
+    const cap = document.createElement('figcaption');
+    const nav = document.createElement('div'); nav.className = 'dg-nav';
+    nav.innerHTML = '<button type="button" class="dg-prev">← previous diagram</button><span class="dg-count"></span><button type="button" class="dg-next">next diagram →</button><button type="button" class="zoom">⤢ Full screen</button>';
+    fig.append(pick, slot, cap, nav);
+    specs.forEach((sp, k) => { const b = document.createElement('button'); b.type='button'; b.textContent = sp.title; b.addEventListener('click', () => show(k)); pick.appendChild(b); });
+    function show(k) { i = (k + specs.length) % specs.length; const sp = specs[i];
+      slot.innerHTML = sp.type === 'seq' ? renderSeq(sp) : renderArch(sp);
+      cap.innerHTML = `<b>${esc(sp.title)}.</b> ${sp.caption || ''}`;
+      pick.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active', j===i));
+      nav.querySelector('.dg-count').textContent = `${i+1} / ${specs.length}`; }
+    nav.querySelector('.dg-prev').addEventListener('click', () => show(i-1));
+    nav.querySelector('.dg-next').addEventListener('click', () => show(i+1));
+    show(0);
+  });
+
   // lightbox for diagrams — the host swaps the <pre> for an <svg>, so listen on the figure
   const lb = document.createElement('div'); lb.id = 'lightbox';
   lb.innerHTML = '<div class="bar"><span id="lbcap"></span><button type="button" id="lbclose">Close  (Esc)</button></div><div class="body" id="lbbody"></div>';
@@ -333,7 +427,7 @@ flowchart LR
   document.querySelectorAll('figure').forEach(fig => {
     if (!fig.querySelector('.mermaid, svg')) return;
     fig.classList.add('zoomable');
-    fig.addEventListener('click', e => { if (e.target.closest('figcaption') && !e.target.closest('.zoom')) return; openLb(fig); });
+    fig.addEventListener('click', e => { if (e.target.closest('.zoom')) { openLb(fig); return; } if (e.target.closest('figcaption, .dg-pick, .dg-nav, button')) return; openLb(fig); });
   });
   window.addEventListener('hashchange', route);
   route();
