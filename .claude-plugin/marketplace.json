@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "operational-understanding",
-      "description": "Three-level operational walkthrough → blog-style Artifact with diagrams and a navigation map.",
+      "description": "Drill-down operational understanding of any subsystem: named parts carried through Plain, High, Mid, Low, Principles, Traces, and a where-to-look map. Asks when the repo can't answer.",
       "source": "./",
       "category": "learning"
     }
