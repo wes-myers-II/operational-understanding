@@ -83,6 +83,13 @@ exercise them; which tests cover them. Written in the same part vocabulary.
 Symptom → part chip → first function to open → string to grep. At least six rows. This is the
 table the reader returns to.
 
+## Titles
+
+A card title says what the card contains, so the hub can be scanned without opening anything:
+"3 · Identity — which connection is main, which is aux", "Where the connector layer sits in the
+system", "Where to look when something is wrong". Never a label alone ("The parts", "Identity").
+Tab labels carry the same information in three or four words ("Mid · inside each part").
+
 ## Anchoring, language, code — the rules that hold everywhere
 
 - No line numbers. File + function + chunk name.

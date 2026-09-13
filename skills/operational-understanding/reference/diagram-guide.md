@@ -17,9 +17,12 @@ is decoration.
 
 ## Rules
 
-- **Regions first.** Wrap nodes in subgraphs named for *where they run* — outside the system,
-  the process that holds the focus, the black boxes — and order them left to right in that
-  order. Location is the first thing the reader must see.
+- **Regions first, one level deep.** Wrap nodes in subgraphs named for *where they run* —
+  outside the system, the process holding the focus, the bridge, the black boxes — declared in
+  left-to-right order. Never nest subgraphs: Mermaid clips edges at the outer box, so a line
+  from outside appears to stop at the region instead of reaching the part.
+- **Edges from outside name their destination part** in the label ("command on 5555 → 3"),
+  so the reader never has to trace a line across the picture to learn where it lands.
 - **One line per label.** Many Mermaid hosts strip `<br/>` and `<b>`; a two-line label renders
   as one run-together word. Keep labels short and plain; put detail in the caption.
 - **Every diagram is click-to-fullscreen** (the template wires it); still keep it legible small.

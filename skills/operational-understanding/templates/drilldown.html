@@ -144,11 +144,11 @@
 </header>
 <nav class="levels" id="levels">
   <a href="#/" data-level="home">Plain</a>
-  <a href="#/high" data-level="high">High</a>
-  <a href="#/mid" data-level="mid">Mid</a>
-  <a href="#/low" data-level="low">Low</a>
-  <a href="#/why" data-level="why">Principles</a>
-  <a href="#/traces" data-level="traces">Traces</a>
+  <a href="#/high" data-level="high">High · where it sits</a>
+  <a href="#/mid" data-level="mid">Mid · inside each part</a>
+  <a href="#/low" data-level="low">Low · the code</a>
+  <a href="#/why" data-level="why">Why it is built this way</a>
+  <a href="#/traces" data-level="traces">Traces · real situations</a>
   <a href="#/map" data-level="map">Where to look</a>
 </nav>
 
@@ -178,7 +178,7 @@
 <section class="page" data-route="/traces" data-level="traces" data-hub="traces"><h2>Traces</h2><p class="hub-intro">Real situations followed through the parts.</p><div class="grid" data-cards></div></section>
 
 <!-- HIGH: exactly two cards -->
-<article class="page" data-route="/high/world" data-level="high" data-title="The world, and where the boundary is" data-fn="processes · modules · framework terms · outside programs" data-hook="…" data-min="3">
+<article class="page" data-route="/high/world" data-level="high" data-title="Where FOCUS sits in SYSTEM" data-fn="processes · modules · framework terms · outside programs" data-hook="…" data-min="3">
   <p class="answer"><b>One sentence.</b></p>
   <div class="boxes"><div class="box"><div class="t">Group</div><ul><li>…</li></ul></div></div>
   <figure><pre class="mermaid">
@@ -188,7 +188,7 @@ flowchart LR
   </pre><figcaption>What this subsystem is responsible for; what is a black box and what crosses its boundary.</figcaption></figure>
   <div class="scroll"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td></td><td></td><td></td></tr></table></div>
 </article>
-<article class="page" data-route="/high/parts" data-level="high" data-title="The parts" data-fn="PART · PART · PART · PART" data-hook="Each part: job, in, out, functions, state." data-min="4">
+<article class="page" data-route="/high/parts" data-level="high" data-title="What FOCUS does — N parts and the paths through them" data-fn="PART · PART · PART · PART" data-hook="Each part: job, in, out, functions, state." data-min="4">
   <p class="answer"><b>One sentence.</b></p>
   <figure><pre class="mermaid">
 flowchart LR
@@ -221,7 +221,7 @@ flowchart LR
 </article>
 
 <!-- MID: one card per part -->
-<article class="page" data-route="/mid/p1" data-level="mid" data-title="1 · PART" data-fn="File.cc · FunctionA · FunctionB" data-hook="…" data-min="3">
+<article class="page" data-route="/mid/p1" data-level="mid" data-title="1 · PART — what it does, in five words" data-fn="File.cc · FunctionA · FunctionB" data-hook="…" data-min="3">
   <div class="partbar"><span class="part p1">1 PART</span><span class="levellinks">in: … · out: … · <a href="#/low/p1">Low →</a></span></div>
   <p class="answer"><b>One sentence.</b></p>
   <dl class="where"><dt>file</dt><dd class="mono">path/File.cc</dd><dt>function</dt><dd class="mono">signature</dd><dt>called from</dt><dd>…</dd></dl>
