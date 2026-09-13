@@ -1,94 +1,89 @@
 # Level rules
 
-The goal of an operational-understanding artifact: the reader understands the focus area so
-well they can explain exactly how it works at a 4th-grade reading level to anyone in the
-company, and can open the code and find any part of it without help.
+The artifact has fixed tabs in a fixed order. A small set of named **parts** is decided once
+and used verbatim on every tab (see SKILL.md §0). This file says what goes on each tab.
 
-The structure is fixed. Every artifact has the same sections in the same order. Only the
-contents vary. This is what makes the output deterministic and lets the reader ask for it
-casually ("use this skill to help me understand X and the change I'm making to it").
+## Plain
 
-## Fixed structure
+One passage, 4th-grade reading level, no code names: who the actors are, what the system does
+for them, the two or three rules that make it behave the way it does. Everyday words for the
+roles ("driver", "helper", "checkpoint", "door") are encouraged here and may be reused in prose
+elsewhere alongside the code names. End with the part names as chips, so the reader sees the
+vocabulary before the first level.
 
-| Section | Question it answers | Unit of explanation | Anchor style |
-|---|---|---|---|
-| **Plain explanation** | How would I explain this to anyone? | one paragraph, 4th-grade reading level | none — no code names |
-| **High** | Where does this sit in the whole system, and what does data flow through to reach it? | modules, processes, subsystems, external systems | module / process / directory names |
-| **Mid** | How does data move from outside the system into the focus area, and what happens to it there? | functions, broken into named logical chunks | `File.cc` + `Function` + chunk name |
-| **Low** | This mid chunk is confusing — what exactly does the code do? | verbatim code next to plain English | `File.cc` + `Function` + chunk name |
-| **Your change** (when the user names one) | What does my add/remove/change touch? | the mid chunks, state, and external contracts it affects | as above |
-| **Where to look** | Something is wrong — where do I start? | symptom → function → grep string | `File.cc` + `Function` |
+## High — the world and the parts
 
-Optional appendix: **Traces** — a real situation followed through the mid chunks, when a
-branch cannot be understood from a single reading. Never a level; never the organizing unit.
+Two cards:
 
-## Anchoring
+**The world, and where the boundary is.** Name the processes, modules, and outside programs
+that exist, using the codebase's own terms and defining each framework term in one clause
+(e.g. what a "Node" or an "Application" is in this framework). One diagram: boxes are
+processes/modules, edges are the transport between them (protocol, topic, file). State
+explicitly what this subsystem is responsible for and what is a black box; for each black box,
+what it accepts, returns, and reports. A table: component → kind → responsible for.
 
-- **No line numbers.** They go stale. Anchor with file and function; inside a large function,
-  anchor with the chunk name, which is a plain-English description of what that stretch of
-  code does ("the chunk that tries known addresses before listening").
-- Every proper noun carries its anchor **where it appears**, every time — function
-  (`RequestClerk.cc · ReceiveRouterMessage`), member (`RequestClerk.h · identity_to_role_`),
-  external thing (`ROS2 topic kRequestReplyTopic, published by RTC`). The reader must never
-  scroll back to find what something is.
-- Assume the reader is a competent engineer. Do not assume they know this codebase's
-  framework vocabulary: define a framework term in one clause the first time it appears, and
-  say what a thing **is**, never what it is not.
+**The parts.** One diagram of the parts and how data moves between them (dotted for "calls
+every cycle", solid for data). One table: part → job → in → out → functions it contains →
+state it owns. Function and member names appear here so Mid attaches to them; nothing about
+how they work. Close with "what reaches in from outside, by part".
 
-## Code excerpts
+Detail level: far things get one line ("RTC acts on request topics and publishes replies");
+near things get their names. The reader should not need to know how a black box works to
+understand this subsystem.
 
-- Verbatim lines only, copied from the stated branch. No paraphrased arguments, no `foo(...)`,
-  no `caches...`. If a stretch is cut, mark it on its own line:
-  `// … 6 lines omitted: assigns the cache pointers passed in`.
-- Author notes are comments in a distinct color, prefixed `// ←`, and are the only non-source
-  text inside a code block.
-- A code block appears at the Low level, and at the Mid level only for a function whose shape
-  *is* the explanation (a dispatch loop, a switch). Everywhere else, name the function and
-  describe the chunk.
+## Mid — inside each part
 
-## High level — "the system as a whole"
+One card per part, same name, same order, with the part chip and a one-line restatement of
+in/out at the top. Then:
 
-Two or three cards:
-- **The system**: the processes/modules that exist, and where the focus area sits. One
-  diagram of boxes = modules/processes, edges = the transport between them (protocol, topic,
-  file). Table: module → directory → what it owns.
-- **The path**: the subsystems data passes through from the outside world to the focus area
-  and back, in order, one line each. This is the spine the mid level expands.
-- **External systems**: anything outside this code that affects how it runs (other programs,
-  network peers, files on disk, hardware, timers) — what it provides, and which module in the
-  path consumes it.
+1. **Where block**: file · function signature · who calls it / what starts it.
+2. **Steps or a chunk map.** For a chain of small functions: numbered steps, each
+   `File.cc · Function` → one plain sentence → state touched. For a large function: a **chunk
+   map** — 3–7 named chunks in reading order, each with a `look for:` cue (a distinctive line
+   the reader can search for). Chunk names are plain English ("make sure we have a main").
+3. **Hand-offs** to other parts, by part name and number ("→ part 5").
+4. **Branches** shown in the same list, marked as such.
+5. A small table when the part has parallel outcomes (which branch → which state → which log).
+6. Link to the part's Low card.
 
-No functions at this level except the entry point.
+Code appears here only when a function's shape *is* the explanation (a dispatch switch).
 
-## Mid level — "how data moves into the focus area"
+## Low — the code of each part
 
-One card per **flow** — one path data takes from outside to inside (a connection being made,
-a request being handled, a reply going back, a control handoff). Each card:
-1. Answer line: what moves, from where, to where.
-2. The flow as ordered steps. Each step = `File.cc · Function` (+ chunk name for big
-   functions) → one plain sentence of what that chunk does → what it reads/writes.
-3. For big functions: a **chunk map** — the function's body split into 3–7 named chunks, in
-   order, so the reader can open the function and locate each by reading.
-4. Branches: where the flow forks, both outcomes, in the same step list.
-5. Link down: any chunk that needs the exact code links to its Low card.
+One card per part, same name. For the chunk in that part that is hardest to read cold: the
+verbatim code on the left, plain English on the right, one paragraph per statement group.
+Cuts marked `// … N lines omitted: what`. Link up to the Mid card and across to the Principles
+that the code implements. Cross-branch notes when the code differs between branches.
 
-Simplify here. The mid level should make the flow feel as simple as it actually is. If a
-flow needs more than ~8 steps, it is two flows.
+## Principles — why it is built this way
 
-## Low level — "exactly what the code does"
+One table: principle → why (two or three sentences, more generic than Low, including the
+cost of the choice) → where it shows up (part chip + link to the Low card). Typical entries:
+a protocol's framing rule, a threading constraint, an ordering guarantee, a persistence
+decision, a security stance and its limit. Six to ten rows.
 
-One card per confusing chunk. Two columns or two stacked blocks: the verbatim code, and a
-plain-English walk of it, sentence per statement group. Say which mid step it serves.
-Cross-branch notes when the code differs between branches.
+## Traces — real situations
 
-## Reading-time budget
+Three to six real journeys through the parts. Each: the actor and what crossed the wire; the
+steps, each tagged with the part chip and the function; a state table (field → value → so).
+One sequence diagram at most, only where the ordering is the point. Traces make the branches
+in Mid feel necessary rather than arbitrary.
 
-`scripts/reading_time.py` reports per-card minutes: 220 wpm prose, 90 wpm code, +30 s per
-diagram, +20 s per table. Keep every card under 5 minutes; split by flow or chunk, never by
-cutting an anchor.
+## Your change (only when the user has named one)
 
-## Voice
+Which parts, chunks, state fields, and black-box contracts the change touches; which Traces
+exercise them; which tests cover them. Written in the same part vocabulary.
 
-Direct, declarative, present tense. Plain words. One idea per sentence. Tables over prose for
-parallel facts. The plain explanation at the top is the test of the whole document: if it
-cannot be written simply, the understanding is incomplete.
+## Where to look
+
+Symptom → part chip → first function to open → string to grep. At least six rows. This is the
+table the reader returns to.
+
+## Anchoring, language, code — the rules that hold everywhere
+
+- No line numbers. File + function + chunk name.
+- Every proper noun carries its anchor where it appears.
+- Say what a thing is; define framework terms on first use; no negation-definitions.
+- Verbatim code only; explicit cuts; `// ←` author notes in a distinct color.
+- Diagrams only where a table cannot do the job.
+- Every card under 5 minutes by `scripts/reading_time.py`.

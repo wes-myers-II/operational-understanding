@@ -50,7 +50,7 @@ def main() -> int:
     # splitting for the single-page layout.
     text = re.sub(r"<(style|script)\b.*?</\1>", " ", text, flags=re.S)
     if re.search(r"<article[^>]*data-title=", text):
-        parts = re.split(r'(?=<article\b|<section[^>]*data-route="/map")', text)
+        parts = re.split(r'(?=<article\b|<section[^>]*data-route="/(?:map|why)")', text)
     else:
         parts = re.split(r"(?=<h[23]\b)", text)
     over = False
@@ -65,6 +65,8 @@ def main() -> int:
             title = html.unescape(card.group(2))
         elif part.startswith("<section") and 'data-route="/map"' in part:
             current_level = title = "map"
+        elif part.startswith("<section") and 'data-route="/why"' in part:
+            current_level = title = "principles"
         else:
             title = strip_tags(m.group(2)).strip() if m else "(front matter)"
             if m and m.group(1) == "2":

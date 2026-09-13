@@ -1,116 +1,112 @@
 ---
 name: operational-understanding
-description: Build a three-level (high / mid / low) operational walkthrough of a subsystem, flow, or module and publish it as a blog-style Artifact with diagrams, reading-time badges, and a "where to look" navigation map. Use when the user wants to *understand how something works end to end* well enough to navigate it with ease — "walk me through X", "how does X actually work", "give me operational understanding of X", "I need to know this system before I change it", or when starting design work on a subsystem they don't yet own. Not for bug fixes, code review, or design proposals; it produces understanding, not changes.
+description: Build an operational understanding of a subsystem, feature, or flow in any codebase and publish it as a drill-down Artifact — plain explanation, High (the world and the named parts), Mid (inside each part, file + function + chunk), Low (verbatim code beside plain English), Principles, Traces, Where to look. Use when the user wants to understand how something works well enough to explain it to anyone and navigate the code cold — "help me understand X", "walk me through X", "I need to know X before I change it", "use operational-understanding on X and the change I'm making". Asks the user pointed questions when the repo cannot answer something (unknown modules, outside systems, assumptions). Not for bug fixes, reviews, or design proposals.
 ---
 
 # Operational Understanding
 
-Produce the document a senior engineer wants before touching a subsystem: enough context to
-navigate it cold, know which ten functions matter, and find any detail trivially when needed —
-without getting lost in the weeds. Output is a blog-style Artifact with three nested levels,
-diagrams at each, and every claim verified against the code.
+The reader should finish able to (1) explain exactly how the focus area works at a 4th-grade
+reading level to anyone in their company, and (2) open the code and find any part of it without
+help. Every artifact has the same tabs in the same order; only the contents change.
 
-## The reader's ethos (this is the definition of done)
+## 0. The vocabulary rule (read this first)
 
-- Whole-system context first; details on demand. Reading it should make the code *navigable*,
-  not memorized.
-- Explicit where a wrong mental model would cause a wrong change. Simplified only at the layer
-  below what the reader needs to act on — and say so when you simplify.
-- Never lost in the weeds: every section readable in one sitting without fatigue.
-- When the reader doesn't know a detail after reading, finding it must be trivial: function
-  names, file names, log strings to grep.
+Before writing anything, name the **parts** of the focus area: 4–8 nouns, each with one job,
+each containing named functions and owning named state. These names are used verbatim at every
+level — High names them, Mid has one card per part, Low has one card per part, Traces and the
+map cite steps by part. Going deeper never changes what the reader is looking at; it only adds
+detail to a name they already know. If a level needs a noun the other levels don't have, the
+part list is wrong; fix the list.
 
-## Method
+The number of parts is the number of jobs the code actually does, never a number chosen to fill
+a level. Too many parts makes reading a chore; too few hides a job.
 
-### 1. Scope and research (do not write yet)
+## 1. Scope and research
 
-1. Pin the target: a flow ("session handoff between two clients"), a module ("the gateway
-   service"), or a mechanism ("the background ingest thread"). Confirm the branch/commit — state
-   it in the artifact header. Mixing branches silently is the most common way these documents go
-   wrong.
-2. Trace the real code. Read the entry point, follow calls, read every function you will name.
-   Delegate broad tracing to a fork/Explore agent; read the load-bearing functions yourself.
-3. Collect **anchors**: `File::Function` for every mechanism, the exact log strings a reader
-   would grep for, the state (members/flags/maps) that the mechanism reads or writes.
-4. Hunt for the **key insights** — facts that reorganize the reader's mental model (e.g.
-   "'connected' happens in two stages, transport then registration", "identity is derived from the
-   connection, never from the payload", "this reply is asynchronous and arrives on a different
-   thread"). Usually 2–4 per topic. These become callout boxes.
-5. Verify anything you are about to assert as behavior by reading the code that does it. If a
-   claim came from a comment, a ticket, or memory, mark it as such or verify it.
+1. **Pin the focus.** A subsystem, a feature, or a flow. Record the branch/commit for the header.
+2. **Draw the boundary.** Decide what is *inside* (this code decides it) and what is a **black
+   box** (this code only sends to it, receives from it, or is gated by its state). Anything on
+   the far side of a transport boundary — another process, another repo, hardware, a network peer
+   — is a black box unless the user says otherwise. For a black box, record only what it accepts,
+   what it returns, and what state it reports.
+3. **Trace the real code.** Entry points, threads/loops, every function you will name. Delegate
+   broad search to an Explore agent; read the load-bearing functions yourself.
+4. **Collect anchors:** file + function for every part; the plain-English name of each chunk
+   inside a large function; the log strings a reader would grep; the state each part owns.
+5. **Collect the principles:** the choices the code rests on (a protocol's framing rule, a
+   threading constraint, an ordering guarantee, a persistence decision). These become the
+   Principles tab.
+6. **Verify anything you will assert as behavior by reading the code that does it.** A claim
+   from a comment or ticket is marked *verify* or removed.
 
-### 2. Write the three levels
+### Ask when the repo cannot answer
 
-Read `reference/level-rules.md` for what belongs at each level and the chunking rules. Summary:
+Stop and ask the user — with `AskUserQuestion`, one to four pointed questions — whenever any of
+these is true. Ask before writing, and ask again mid-write if a new gap appears. Never fill a
+gap with a guess.
 
-| Level | Question it answers | Unit of explanation | Diagram |
+| Gap | Ask for |
+|---|---|
+| A module or dependency the focus area calls whose source is not in this repo | where it lives (another repo, a vendored lib, a service); whether to treat it as a black box; what it accepts and returns |
+| An outside system that shapes behavior (a peer program, a config file written elsewhere, a deploy tool, hardware, a clock) | who owns it; what it provides; whether there is a doc or repo to read |
+| An assumption you are about to encode (a default, a timeout's origin, a protocol's guarantee) that the code does not state | confirmation, or the source |
+| The user has named a change ("…and the thing I want to add / remove / change") | exactly what the change is, so the *Your change* section can list what it touches |
+| Two candidate part lists and the code does not settle which is right | which framing the user thinks in |
+
+Phrase questions so the answer bridges the gap: "The focus calls `Foo::Bar` from `libfoo`,
+which is not in this repo. Is that a black box for our purposes, or should I read its source —
+and if so, where is it?"
+
+## 2. Write, in the fixed tab order
+
+Read `reference/level-rules.md` for the contents of each tab. In brief:
+
+| Tab | Answers | Unit | Anchor |
 |---|---|---|---|
-| **High** | What is this and how does it flow end to end? | subsystems, processes/threads, boundaries (sockets, APIs, queues), state categories | one architecture/flow diagram |
-| **Mid** | Which functions do what, in what order, touching which state? | functions, modules, state tables | sequence / state / flowchart per scenario |
-| **Low** | I didn't follow a mid-level step — show me. | code excerpts, field-by-field tables, exact conditions | annotated excerpt, small focused diagram |
+| **Plain** | How would I explain this to anyone? | one short passage, 4th-grade reading level, then the part names | none |
+| **High** | What world does this live in, where is the boundary, what are the parts? | processes, modules, black boxes; the parts with job / in / out / functions / state | module and component names; function names listed, not shown |
+| **Mid** | Inside each part, which functions do what, in what order? | one card per part; file + function; chunk maps for large functions; hand-offs to other parts by name | `File.cc · Function · chunk name` |
+| **Low** | Exactly what does this chunk's code do? | one card per part; verbatim code beside plain English | same |
+| **Principles** | Why is it built this way? | the choices, each linked to the Low card that implements it | part names |
+| **Traces** | What does a real situation look like through these parts? | 3–6 real journeys, steps tagged by part | part names + functions |
+| **Your change** (when named) | What does my change touch? | the parts, chunks, state, and black-box contracts it affects | part names + functions |
+| **Where to look** | Something is wrong — where do I start? | symptom → part → function → grep string; ≥ 6 rows | functions |
 
-Rules that hold at every level:
-- Each section carries a reading-time badge and stays under ~5 minutes (see level-rules for the
-  formula). Split rather than compress.
-- Function names are the primary anchor. Line numbers are allowed as `(~NNN)` and labeled as
-  volatile; never make a claim depend on one.
-- Scenarios are told as **actor action → boundary (wire / API call / event) → system state**,
-  with a state table after any multi-step transition.
-- The Low level ends with a **navigation map**: symptom → first function to open → log string.
-- Mid → Low cross-links: every mid step that compresses something links to the low section that
-  expands it.
-- Name what you deliberately simplified, in one sentence, at the end of each level.
+## 3. Rules that hold everywhere
 
-### 3. Diagrams
+- **No line numbers.** Anchor with file + function + chunk name. Chunk names are plain English
+  descriptions of what a stretch of code does, with a `look for:` cue (a distinctive line).
+- **Every name carries its anchor where it appears.** The reader never scrolls back.
+- **Say what a thing is.** Never define by negation, and never lean on framework vocabulary
+  the reader may not have: define a framework term in one clause the first time it appears.
+- **Code excerpts are verbatim.** No paraphrased arguments, no `foo(...)`, no `things...`.
+  Cuts are marked on their own line: `// … 6 lines omitted: what they do`. Author notes are
+  `// ←` comments in a distinct color and are the only non-source text in a code block.
+- **Code appears at Low**, and at Mid only when a function's shape is the explanation.
+- **A diagram earns its place only when a table cannot show the same thing.** Two or three
+  per artifact is typical: the world, the parts, maybe one sequence in Traces.
+- **Simplify at the right layer.** Mid should make a part feel as simple as it is. Black boxes
+  stay black; the reader is told what crosses the boundary, never what happens inside.
 
-Read `reference/diagram-guide.md`. Choose the diagram by what the reader must *see*:
-
-- **Flow through time between parties** → Mermaid `sequenceDiagram` (handoffs, handshakes, request/reply).
-- **State that changes** → Mermaid `stateDiagram-v2` (connection lifecycle, flags).
-- **Boxes and wires / who talks to whom** → inline SVG via the `artifact-diagramming` skill
-  (architecture, processes, threads, queues, sockets). Mermaid `flowchart` is acceptable for a
-  first draft.
-- **Decision logic** → Mermaid `flowchart` with the real condition text on the edges.
-
-Mermaid renders natively in Artifacts (`<pre class="mermaid">`), no library. Excalidraw is
-**not installed** on this machine; if the user wants to experiment with it, see the guide's
-"experimental backends" section before promising anything. Every diagram gets a one-line caption
-stating what to notice.
-
-### 4. Build and publish the artifact
+## 4. Build and publish
 
 1. Load the `artifact-design` skill (mandatory before writing any artifact).
-2. Start from `templates/drilldown.html` (default). It is a one-screen-at-a-time app: a Start
-   page, one hub of cards per level, one `<article>` card per section with breadcrumb and
-   prev/next injected, hash routes (`#/mid/s4`) so any card is linkable, and a ✓ on cards the
-   reader has opened. The reader isolates one piece, reads it, and comes back — never a single
-   long scroll. Fill: title, purpose, branch/worktree, the cards (each `<article>` needs
-   `data-route`, `data-level`, `data-title`, `data-hook`, `data-min`), the map, and "what this
-   replaces" if the topic is being redesigned. Cross-link cards with `href="#/low/<slug>"`.
-   `templates/blog.html` is the single-page fallback for when the user asks for one scrollable
-   document.
-3. Run `scripts/reading_time.py <file.html>` and paste the numbers into the badges. Re-split any
-   section over the limit.
-4. Publish with the Artifact tool. Title = the subsystem name (e.g. "Session Layer",
-   "Ingest Pipeline"), not a summary. Favicon once on first publish.
-5. On revisions, redeploy the same file path.
+2. Start from `templates/drilldown.html`. It is a one-screen-at-a-time app with hash routes,
+   level tabs, generated hub cards, prev/next, part chips, and ✓ marks. Each `<article>` needs
+   `data-route`, `data-level` (`high|mid|low|traces`), `data-title`, `data-fn`, `data-hook`,
+   `data-min`. Principles and Where-to-look are `<section>`s with `data-route="/why"` and
+   `data-route="/map"`. Part chips are `<span class="part pN">`.
+3. Run `scripts/reading_time.py <file.html>`; every card under 5 minutes; fill `data-min`.
+4. Publish with the Artifact tool. Title = the subsystem's name. Favicon on first publish.
+5. On revision, redeploy the same file path.
 
-### 5. Quality gate (check before publishing)
+## 5. Quality gate
 
-- [ ] Every function named exists on the stated branch (grep it).
-- [ ] Every scenario ends in a state table or an explicit "state unchanged".
-- [ ] Key insights are called out, not buried in prose.
-- [ ] Navigation map present, at least 6 rows.
-- [ ] No section badge over the limit; total time stated at the top.
-- [ ] Each level ends with its "what I simplified" line.
-- [ ] Diagrams have captions; sequence diagrams show the *real* function names as messages.
-- [ ] No hand-wave verbs ("commits", "handles", "checks") without saying what is done.
-
-## Anti-patterns (each of these has made a reader stop trusting the document)
-
-- Listing function names as if naming them explained them.
-- Line numbers without a filename.
-- A "call sequence" with no explanation of callers, parameters, or where values come from.
-- Prose that narrates the author's process ("I traced…") instead of the system.
-- Claiming a fix, a bug, or a behavior from a comment without reading the code that does it.
-- Mixing two branches' code without saying so.
+- [ ] The part list is the same on High, Mid, Low, Traces, and the map.
+- [ ] The Plain passage can be read aloud to someone outside engineering.
+- [ ] Every black box is named as one, with what crosses its boundary.
+- [ ] Every gap was asked about, not guessed; answers are reflected in the text.
+- [ ] Every function named exists on the stated branch; every excerpt is verbatim.
+- [ ] No line numbers; no negation-definitions; no undefined framework terms.
+- [ ] Principles each link to a Low card; each Low card links up to its Mid card.
+- [ ] Where-to-look has ≥ 6 rows with grep strings.
