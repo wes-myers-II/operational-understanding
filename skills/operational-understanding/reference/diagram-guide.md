@@ -17,6 +17,13 @@ is decoration.
 
 ## Rules
 
+- **Regions first.** Wrap nodes in subgraphs named for *where they run* — outside the system,
+  the process that holds the focus, the black boxes — and order them left to right in that
+  order. Location is the first thing the reader must see.
+- **One line per label.** Many Mermaid hosts strip `<br/>` and `<b>`; a two-line label renders
+  as one run-together word. Keep labels short and plain; put detail in the caption.
+- **Every diagram is click-to-fullscreen** (the template wires it); still keep it legible small.
+
 - Nodes are the same names used in the text: part names on the parts diagram, component and
   process names on the world diagram, function names in a sequence. Never a paraphrase.
 - Edge labels are the real transport or the real condition, copied from the code where there is

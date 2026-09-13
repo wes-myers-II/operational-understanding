@@ -117,19 +117,24 @@
   .pathrow .lbl { font-weight: 600; font-size: .9rem; }
   .pathrow .lbl small { display: block; font-weight: 400; color: var(--muted); font-size: .8rem; }
   .strip { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; }
+  .paths-t td { vertical-align: top; line-height: 1.7; }
+  .paths-t .ext { display: inline-block; font-size: .78rem; padding: 0 .5rem; border: 1px dashed var(--rule); border-radius: 3px; color: var(--muted); white-space: nowrap; }
   .strip .ext { display: inline-block; font-size: .78rem; padding: 0 .5rem; border: 1px dashed var(--rule); border-radius: 3px; color: var(--muted); white-space: nowrap; }
   .strip .arr { color: var(--muted); }
   .strip .fnn { font: .74rem "IBM Plex Mono", Menlo, monospace; color: var(--accent); white-space: nowrap; }
 
   /* click any diagram to view it full screen; Esc, click, or the × closes it */
   pre.mermaid { cursor: zoom-in; position: relative; }
-  figure.zoomable::after { content: "click to enlarge · Esc to close"; display: block; font: .7rem "IBM Plex Mono", Menlo, monospace; color: var(--muted); margin-top: .2rem; }
+  figure.zoomable { position: relative; }
+  figure.zoomable .mermaid, figure.zoomable svg { cursor: zoom-in; }
+  figure .zoom { font: 500 .74rem "IBM Plex Sans", sans-serif; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .7rem; cursor: pointer; margin-top: .4rem; }
+  figure .zoom:hover { background: var(--card-hover); }
   #lightbox { position: fixed; inset: 0; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
   #lightbox.open { display: flex; }
   #lightbox .bar { display: flex; justify-content: space-between; align-items: center; padding: .6rem 1rem; border-bottom: 1px solid var(--rule); font-size: .85rem; color: var(--muted); }
   #lightbox .bar button { font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--rule); padding: .3rem .8rem; cursor: pointer; }
   #lightbox .body { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 1rem; cursor: zoom-out; }
-  #lightbox .body svg { width: 96vw !important; height: auto !important; max-width: none !important; max-height: 88vh; }
+  #lightbox .body svg { width: 96vw; height: auto; max-width: none; max-height: 86vh; }
 </style>
 
 <main>
@@ -178,7 +183,7 @@
   <div class="boxes"><div class="box"><div class="t">Group</div><ul><li>…</li></ul></div></div>
   <figure><pre class="mermaid">
 flowchart LR
-  A["outside program"] -- "transport" --> B["<b>focus component</b>"]
+  A["outside program"] -- "transport" --> B["focus component"]
   B -- "transport" --> C["black box"]
   </pre><figcaption>What this subsystem is responsible for; what is a black box and what crosses its boundary.</figcaption></figure>
   <div class="scroll"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td></td><td></td><td></td></tr></table></div>
@@ -188,19 +193,22 @@ flowchart LR
   <figure><pre class="mermaid">
 flowchart LR
   A["actor"]
-  subgraph F["focus component"]
+  subgraph OUT["OUTSIDE"]
+    A2["other actor"]
+  end
+  subgraph F["PROCESS — focus component"]
     direction LR
-    P1["<b>1 PART</b>"]
-    P2["<b>2 PART</b>"]
-    P3["<b>3 PART</b>"]
+    P1["1 PART"]
+    P2["2 PART"]
+    P3["3 PART"]
   end
   B["black box"]
-  A -- "one edge per path, lanes that do not cross" --> P1
+  A -- "one edge per path" --> P1
   P1 --> P2
   P2 --> B
   B --> P3
   P3 --> A
-  </pre><figcaption>Name the lanes here. The strips below are the legend.</figcaption></figure>
+  </pre><figcaption>Left to right = outside → the focus → the black boxes. Name the lanes here.</figcaption><button type="button" class="zoom">⤢ Full screen</button></figure>
   <h3>The paths an outside actor can take — one row per thing it can do</h3>
   <div class="paths">
     <div class="pathrow"><div class="lbl">Do X<small>one clause</small></div>
@@ -306,23 +314,26 @@ flowchart LR
   }
   document.getElementById('resetdone').addEventListener('click', () => { done.clear(); saveDone(); renderHubs(); });
 
-  // lightbox for diagrams
+  // lightbox for diagrams — the host swaps the <pre> for an <svg>, so listen on the figure
   const lb = document.createElement('div'); lb.id = 'lightbox';
-  lb.innerHTML = '<div class="bar"><span id="lbcap"></span><button type="button" id="lbclose">Close (Esc)</button></div><div class="body" id="lbbody"></div>';
+  lb.innerHTML = '<div class="bar"><span id="lbcap"></span><button type="button" id="lbclose">Close  (Esc)</button></div><div class="body" id="lbbody"></div>';
   document.body.appendChild(lb);
   const closeLb = () => { lb.classList.remove('open'); document.getElementById('lbbody').innerHTML = ''; };
   document.getElementById('lbclose').addEventListener('click', closeLb);
   document.getElementById('lbbody').addEventListener('click', closeLb);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
-  document.querySelectorAll('pre.mermaid').forEach(pre => {
-    const fig = pre.closest('figure'); if (fig) fig.classList.add('zoomable');
-    pre.addEventListener('click', () => {
-      const svg = pre.querySelector('svg'); if (!svg) return;
-      const cap = fig && fig.querySelector('figcaption');
-      document.getElementById('lbcap').textContent = cap ? cap.textContent.slice(0, 160) : '';
-      document.getElementById('lbbody').innerHTML = svg.outerHTML;
-      lb.classList.add('open');
-    });
+  function openLb(fig) {
+    const svg = fig.querySelector('svg'); if (!svg) return;
+    const cap = fig.querySelector('figcaption');
+    document.getElementById('lbcap').textContent = cap ? cap.textContent.slice(0, 200) : '';
+    const clone = svg.cloneNode(true); clone.removeAttribute('style'); clone.removeAttribute('width'); clone.removeAttribute('height');
+    document.getElementById('lbbody').appendChild(clone);
+    lb.classList.add('open');
+  }
+  document.querySelectorAll('figure').forEach(fig => {
+    if (!fig.querySelector('.mermaid, svg')) return;
+    fig.classList.add('zoomable');
+    fig.addEventListener('click', e => { if (e.target.closest('figcaption') && !e.target.closest('.zoom')) return; openLb(fig); });
   });
   window.addEventListener('hashchange', route);
   route();
