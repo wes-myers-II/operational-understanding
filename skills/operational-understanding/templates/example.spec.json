@@ -1,0 +1,70 @@
+{
+  "title": "Example Subsystem",
+  "favicon": "🧭",
+  "branch": "main @ 0000000",
+  "focus": "src/example (Gatekeeper, Bridge)",
+  "container": {"id": "loop", "name": "The Loop"},
+  "parts": [
+    {"id": "intake", "name": "Intake"},
+    {"id": "check", "name": "The Check"},
+    {"id": "reply", "name": "Replies"}
+  ],
+  "plain": [
+    "<p>A program outside the system sends a request. One loop inside the system takes it in, checks it, hands it onward, and sends the answer back.</p>"
+  ],
+  "vocabulary": "<b>client</b> = the outside program, <b>downstream</b> = the thing that acts.",
+  "high": [
+    {"route": "world", "title": "Where the subsystem sits in the system", "fn": "process · bridge · black box", "hook": "The processes involved and what is a black box from here.", "min": 2,
+     "body": "<p class=\"answer\"><b>One sentence on the world.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td><b>Gatekeeper</b></td><td>a class in the service process</td><td>{{L}} running {{part:intake}}, {{part:check}}, {{part:reply}}</td></tr></table></div>",
+     "diagrams": [
+       {"title": "Where it sits", "type": "arch", "rows": 1, "caption": "Columns are places. Edges are transports.",
+        "cols": [{"label": "Outside"}, {"label": "Service process"}, {"label": "Bridge"}, {"label": "Black box"}],
+        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "g", "col": 1, "row": 0, "label": "Gatekeeper", "part": "L"}, {"id": "b", "col": 2, "row": 0, "label": "Bridge"}, {"id": "d", "col": 3, "row": 0, "label": "Downstream", "black": true}],
+        "edges": [{"from": "c", "to": "g", "label": "HTTP · 8080"}, {"from": "g", "to": "b", "label": "checked request"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}]}
+     ]},
+    {"route": "parts", "title": "What the Gatekeeper does — the Loop, three parts, and the paths through them", "fn": "{{name:intake}} · {{name:check}} · {{name:reply}}", "hook": "Location of the parts, then one sequence per thing a client can do.", "min": 3,
+     "body": "<p class=\"answer\"><b>One Loop, three parts, numbered in the order a request meets them.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Part</th><th>Job</th><th>In</th><th>Out</th><th>Functions</th><th>State</th></tr><tr><td>{{part:intake}}</td><td>receive</td><td>request</td><td>parsed request</td><td><code>Receive</code></td><td><code>queue_</code></td></tr></table></div>",
+     "diagrams": [
+       {"title": "Location of the parts", "type": "arch", "rows": 3, "caption": "Rows are path order; the dashed frame is the Loop.",
+        "cols": [{"label": "Outside"}, {"label": "Gatekeeper"}, {"label": "Bridge"}, {"label": "Black box"}],
+        "frames": [{"label": "The Loop — one pass runs 1 → 2 → 3", "col": 1, "rowFrom": 0, "rowTo": 2}],
+        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "p1", "col": 1, "row": 0, "part": "intake"}, {"id": "p2", "col": 1, "row": 1, "part": "check"}, {"id": "p3", "col": 1, "row": 2, "part": "reply"}, {"id": "b", "col": 2, "row": 1, "label": "Bridge"}, {"id": "d", "col": 3, "row": 1, "label": "Downstream", "black": true}],
+        "edges": [{"from": "c", "to": "p1", "label": "request · 8080"}, {"from": "p1", "to": "p2", "label": "parsed"}, {"from": "p2", "to": "b", "label": "allowed"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}, {"from": "b", "to": "p3", "label": "queued result"}, {"from": "p3", "to": "c", "label": "answer"}]},
+       {"title": "Send a request", "type": "seq", "caption": "Columns are actors and parts; rows are steps.",
+        "cols": [{"id": "c", "label": "Client"}, {"id": "p1", "part": "intake"}, {"id": "p2", "part": "check"}, {"id": "p3", "part": "reply"}, {"id": "b", "label": "Bridge"}, {"id": "d", "label": "Downstream", "black": true}],
+        "steps": [{"from": "c", "to": "p1", "label": "request on 8080"}, {"from": "p1", "to": "p1", "label": "Receive: parse"}, {"from": "p1", "to": "p2", "label": "parsed"}, {"from": "p2", "to": "b", "label": "Check → Forward"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}, {"from": "b", "to": "p3", "label": "queued result"}, {"from": "p3", "to": "c", "label": "answer"}]}
+     ]}
+  ],
+  "mid": [
+    {"part": "loop", "title": "one pass of Run", "fn": "Gatekeeper.cc · Run", "hook": "The while loop everything runs in.", "min": 2, "links": "in: time · out: calls {{n:intake}} {{n:check}} {{n:reply}}",
+     "body": "<p class=\"answer\"><b>One sentence.</b></p><div class=\"chunks\"><div class=\"h\">Chunk map of <b>Run</b></div><ol><li><b>Wait.</b> …<span class=\"f\">look for: poll(</span></li></ol></div>"},
+    {"part": "intake", "title": "receiving a request", "fn": "Gatekeeper.cc · Receive", "hook": "…", "min": 2, "links": "in: bytes · out: parsed request", "body": "<p class=\"answer\"><b>One sentence.</b></p>"},
+    {"part": "check", "title": "deciding if it is allowed", "fn": "Gatekeeper.cc · Check", "hook": "…", "min": 2, "links": "in: parsed request · out: allowed or refused", "body": "<p class=\"answer\"><b>One sentence.</b></p>"},
+    {"part": "reply", "title": "sending the answer", "fn": "Gatekeeper.cc · Reply", "hook": "…", "min": 2, "links": "in: result · out: answer", "body": "<p class=\"answer\"><b>One sentence.</b></p>"}
+  ],
+  "low": [
+    {"part": "loop", "title": "the code of the while body", "fn": "Gatekeeper.cc · Run", "hook": "…", "min": 2, "body": "<div class=\"two\"><pre><code>while (ok()) {\n  poll();\n<span class=\"om\">  // … 3 lines omitted: bookkeeping</span>\n}</code></pre><div class=\"en\"><p><b>Wait</b> for input.</p></div></div>"},
+    {"part": "intake", "title": "the code that parses", "fn": "Gatekeeper.cc · Receive", "hook": "…", "min": 2, "body": "<div class=\"two\"><pre><code>Request Receive() { return Parse(read()); }</code></pre><div class=\"en\"><p>Read, then parse.</p></div></div>"},
+    {"part": "check", "title": "the code that decides", "fn": "Gatekeeper.cc · Check", "hook": "…", "min": 2, "body": "<div class=\"two\"><pre><code>bool Check(const Request&amp; r) { return r.valid(); }</code></pre><div class=\"en\"><p>Valid requests pass.</p></div></div>"},
+    {"part": "reply", "title": "the code that answers", "fn": "Gatekeeper.cc · Reply", "hook": "…", "min": 2, "body": "<div class=\"two\"><pre><code>void Reply(const Result&amp; r) { send(r); }</code></pre><div class=\"en\"><p>Send it back.</p></div></div>"}
+  ],
+  "traces": [
+    {"route": "happy", "title": "A client sends one request and gets an answer", "fn": "parts {{n:intake}} → {{n:check}} → {{n:reply}}", "hook": "The whole path once.", "min": 1,
+     "body": "<p class=\"answer\"><b>Actor:</b> client. <b>Wire:</b> HTTP on 8080.</p>{{diagrams}}",
+     "diagrams": [{"title": "One request", "type": "seq", "caption": "…", "cols": [{"id": "c", "label": "Client"}, {"id": "p1", "part": "intake"}, {"id": "p3", "part": "reply"}], "steps": [{"from": "c", "to": "p1", "label": "request"}, {"from": "p3", "to": "c", "label": "answer"}]}]}
+  ],
+  "principles": [
+    {"name": "Identity comes from the connection", "why": "…", "where": "{{n:intake}} <a href=\"#/low/intake\">Receive</a>"},
+    {"name": "One question per diagram", "why": "…", "where": "{{L}}"},
+    {"name": "Persist after stable", "why": "…", "where": "{{n:reply}}"},
+    {"name": "Never block the loop", "why": "…", "where": "{{L}}"}
+  ],
+  "map": [
+    {"symptom": "Client gets no answer", "part": "reply", "open": "<code>Reply</code>", "grep": "<code>sending answer</code>"},
+    {"symptom": "Request refused", "part": "check", "open": "<code>Check</code>", "grep": "<code>refused:</code>"},
+    {"symptom": "Nothing received", "part": "intake", "open": "<code>Receive</code>", "grep": "<code>listening on</code>"},
+    {"symptom": "Loop stalls", "part": "L", "open": "<code>Run</code>", "grep": "<code>poll timeout</code>"},
+    {"symptom": "Downstream never acts", "part": "check", "open": "<code>Forward</code>", "grep": "<code>forwarded</code>"},
+    {"symptom": "Answer goes to the wrong client", "part": "reply", "open": "<code>Reply</code>", "grep": "<code>routing</code>"}
+  ]
+}

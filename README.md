@@ -42,19 +42,35 @@ Or vendor it into one project so teammates get it with the checkout:
     /operational-understanding <subsystem, feature, or flow>
     /operational-understanding <subsystem> and the change I'm making: <what>
 
-Requires the Claude Code Artifact tool (for publishing) and the built-in `artifact-design`
-skill, which the skill loads itself. Diagrams render with Mermaid, which Artifacts support
-natively; no external services.
+Requires the Claude Code Artifact tool (for publishing), the built-in `artifact-design` skill
+(loaded by the skill itself), and `node` on PATH for the diagram layout check. No external
+services: diagrams are drawn by a small deterministic engine inside the page from declared
+positions — no auto-layout, no Mermaid.
+
+## How a page is made
+
+The model never hand-assembles HTML. It writes a content spec (parts in path order, cards,
+diagram specs, text with `{{part:id}}` tokens) and runs
+
+    python3 skills/operational-understanding/scripts/build.py spec.json out.html
+
+The builder assembles the page from the template shell, assigns every part number, chip,
+and diagram label from the one parts list, lints the content (bare part numbers, line-number
+anchors, ellipses in code, bare-label titles, missing part cards, unknown ids), runs the
+diagram layout check and the reading-time budget, and refuses to emit a page that fails.
 
 ## Layout
 
     skills/operational-understanding/
-      SKILL.md                    method: vocabulary rule, boundary, ask-at-gaps, tab order, quality gate
-      reference/level-rules.md    what belongs on each tab
-      reference/diagram-guide.md  which diagram for which content
-      templates/drilldown.html    the one-screen-at-a-time app shell (default)
-      templates/blog.html         single-page fallback
-      scripts/reading_time.py     per-card minutes; exits 1 if a card is over 5 minutes
+      SKILL.md                     method: vocabulary rule, boundary, ask-at-gaps, tab order, build, quality gate
+      reference/level-rules.md     what belongs on each tab
+      reference/diagram-guide.md   the two diagram templates (architecture grid, sequence) and routing rules
+      reference/spec-schema.md     the content spec the model writes
+      templates/drilldown.html     the page shell: CSS, router, diagram engine, lightbox
+      templates/example.spec.json  a minimal neutral spec that builds
+      scripts/build.py             spec → page, with lint and checks
+      scripts/diagram_check.py     layout check for the diagrams (needs node)
+      scripts/reading_time.py      per-card minutes; fails if a card is over 5 minutes
 
 ## License
 

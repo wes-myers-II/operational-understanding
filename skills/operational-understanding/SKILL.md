@@ -93,20 +93,24 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 
 ## 4. Build and publish
 
+**Never hand-assemble the HTML.** Write the content spec; the builder writes the page.
+
 1. Load the `artifact-design` skill (mandatory before writing any artifact).
-2. Start from `templates/drilldown.html`. It is a one-screen-at-a-time app with hash routes,
-   level tabs, generated hub cards, prev/next, part chips, ✓ marks, and click-to-fullscreen on every diagram (Esc or click closes). Each `<article>` needs
-   `data-route`, `data-level` (`high|mid|low|traces`), `data-title`, `data-fn`, `data-hook`,
-   `data-min`. Principles and Where-to-look are `<section>`s with `data-route="/why"` and
-   `data-route="/map"`. Part chips are `<span class="part pN">`.
-3. Diagrams are JSON specs inside `<figure class="diagset">` rendered by the template's engine
-   (`arch` grid and `seq` templates — see `reference/diagram-guide.md`). Never Mermaid, never
-   auto-layout. Before publishing run `scripts/diagram_check.py <file.html>` (needs node): it
-   fails on text outside the viewBox, a node line wider than its box, an edge passing through a
-   box, or a literal `</script>` inside the main script block.
-4. Run `scripts/reading_time.py <file.html>`; every card under 5 minutes; fill `data-min`.
-5. Publish with the Artifact tool. Title = the subsystem's name. Favicon on first publish.
-6. On revision, redeploy the same file path.
+2. Write `spec.json` per `reference/spec-schema.md`: title, branch, focus, the container and
+   the parts (in path order — this order is the numbering everywhere), the plain passage, two
+   High cards, one Mid and one Low card per part, traces, principles, map. Text uses tokens
+   (`{{part:id}}`, `{{n:id}}`, `{{L}}`) instead of typed numbers or names; diagrams are `arch` /
+   `seq` specs whose nodes reference parts by id. Card bodies are HTML fragments; code excerpts
+   verbatim with `<span class="om">// … N lines omitted: what</span>` cut markers.
+3. Run `python3 scripts/build.py spec.json out.html`. It assembles the page from
+   `templates/drilldown.html` (shell, router, diagram engine, lightbox), assigns every part
+   number, chip, and diagram label from the parts list, then lints (bare part numbers,
+   line-number anchors, ellipses in code, bare-label titles, missing part cards, unknown ids,
+   `</script>` inside the script block) and runs `diagram_check.py` (text in bounds, labels in
+   boxes, no edge through a box, no coincident verticals; needs node) and `reading_time.py`
+   (every card ≤ 5 min). It prints `OK` or refuses. Fix the spec, never the output.
+4. Publish `out.html` with the Artifact tool. Title = the subsystem's name. Favicon on first
+   publish. On revision, edit the spec, rebuild, redeploy the same file path.
 
 ## 5. Quality gate
 
