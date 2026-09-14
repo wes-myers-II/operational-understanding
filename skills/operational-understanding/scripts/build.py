@@ -35,6 +35,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -371,7 +372,12 @@ def main() -> int:
     for e in lint.errors:
         print("ERROR", e)
     rc = 0
-    if "--no-node" not in sys.argv:
+    if "--no-node" in sys.argv:
+        print("WARN diagram layout check skipped (--no-node)")
+    elif not shutil.which("node"):
+        print("WARN diagram layout check skipped: `node` is not on PATH. Install Node.js to enable it, "
+              "or review the diagrams by eye before publishing.")
+    else:
         rc |= subprocess.call([sys.executable, os.path.join(HERE, "diagram_check.py"), out])
     rc |= subprocess.call([sys.executable, os.path.join(HERE, "reading_time.py"), out])
     if lint.errors:

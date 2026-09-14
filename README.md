@@ -42,10 +42,24 @@ Or vendor it into one project so teammates get it with the checkout:
     /operational-understanding <subsystem, feature, or flow>
     /operational-understanding <subsystem> and the change I'm making: <what>
 
-Requires the Claude Code Artifact tool (for publishing), the built-in `artifact-design` skill
-(loaded by the skill itself), and `node` on PATH for the diagram layout check. No external
-services: diagrams are drawn by a small deterministic engine inside the page from declared
-positions — no auto-layout, no Mermaid.
+## Requirements
+
+| Needed for | Requirement | If missing |
+|---|---|---|
+| building the page | Python 3.9+, standard library only | — |
+| the diagram layout check | `node` on PATH | build still runs; it warns that the check was skipped |
+| publishing as a claude.ai artifact | the Claude Code Artifact tool | the output is one self-contained HTML file; open it in a browser or host it anywhere |
+| design calibration | the built-in `artifact-design` skill | skipped if not present; the template carries the design |
+
+No external services and no CDN-loaded libraries except Google Fonts (with system fallbacks):
+diagrams are drawn by a small deterministic engine inside the page from declared positions —
+no auto-layout, no Mermaid.
+
+Verify a checkout works before relying on it:
+
+    python3 skills/operational-understanding/scripts/build.py \
+        skills/operational-understanding/templates/example.spec.json /tmp/example.html
+    # expect: OK: /tmp/example.html
 
 ## How a page is made
 

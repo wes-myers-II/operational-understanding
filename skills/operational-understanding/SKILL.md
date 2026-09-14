@@ -95,7 +95,8 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 
 **Never hand-assemble the HTML.** Write the content spec; the builder writes the page.
 
-1. Load the `artifact-design` skill (mandatory before writing any artifact).
+1. If the built-in `artifact-design` skill is available in this session, load it; if it is not
+   listed, continue — the template already carries the design decisions it would ask for.
 2. Write `spec.json` per `reference/spec-schema.md`: title, branch, focus, the container and
    the parts (in path order — this order is the numbering everywhere), the plain passage, two
    High cards, one Mid and one Low card per part, traces, principles, map. Text uses tokens
@@ -107,10 +108,15 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
    number, chip, and diagram label from the parts list, then lints (bare part numbers,
    line-number anchors, ellipses in code, bare-label titles, missing part cards, unknown ids,
    `</script>` inside the script block) and runs `diagram_check.py` (text in bounds, labels in
-   boxes, no edge through a box, no coincident verticals; needs node) and `reading_time.py`
-   (every card ≤ 5 min). It prints `OK` or refuses. Fix the spec, never the output.
-4. Publish `out.html` with the Artifact tool. Title = the subsystem's name. Favicon on first
-   publish. On revision, edit the spec, rebuild, redeploy the same file path.
+   boxes, no edge through a box, no coincident verticals) and `reading_time.py` (every card
+   ≤ 5 min). It prints `OK` or refuses. Fix the spec, never the output.
+   Dependencies: Python 3.9+ (standard library only) and, for the diagram layout check, `node`
+   on PATH. Without node the build still runs and prints a warning that the layout check was
+   skipped; tell the user so they can install node or eyeball the diagrams.
+4. Publish `out.html`. If the Artifact tool is available, publish with it (title = the
+   subsystem's name; favicon on first publish; on revision, rebuild and redeploy the same file
+   path). If it is not, the page is a self-contained single file: tell the user the path and
+   that opening it in any browser works, or that they can host it wherever they keep docs.
 
 ## 5. Quality gate
 
