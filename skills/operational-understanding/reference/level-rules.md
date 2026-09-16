@@ -19,7 +19,7 @@ Two cards:
 that exist, using the codebase's own terms and defining each framework term in one clause
 (e.g. what a "Node" or an "Application" is in this framework). One diagram: boxes are
 processes/modules, edges are the transport between them (protocol, topic, file). State
-explicitly what this subsystem is responsible for and what is a black box; for each black box,
+explicitly what this subsystem is responsible for and what is a faded neighbor; for each faded neighbor,
 what it accepts, returns, and reports. A table: component → kind → responsible for.
 
 **The parts.** One figure slot with a picker: first the **architecture grid** of the parts
@@ -30,8 +30,8 @@ answer, …). See `diagram-guide.md`. Under it, a table: what happens → path t
 contains → state it owns. Function and member names appear here so Mid attaches to them; nothing about
 how they work. Close with "what reaches in from outside, by part".
 
-Detail level: far things get one line ("RTC acts on request topics and publishes replies");
-near things get their names. The reader should not need to know how a black box works to
+Detail level — **fade by relevance**: the further a thing is from the focus, the more opaquely it is described. Far things get one line ("RTC acts on request topics and publishes replies");
+near things get their names. The reader should not need to know how a faded neighbor works to
 understand this subsystem.
 
 ## Mid — inside each part
@@ -74,7 +74,7 @@ in Mid feel necessary rather than arbitrary.
 
 ## Your change (only when the user has named one)
 
-Which parts, chunks, state fields, and black-box contracts the change touches; which Traces
+Which parts, chunks, state fields, and boundary contracts the change touches; which Traces
 exercise them; which tests cover them. Written in the same part vocabulary.
 
 ## Where to look

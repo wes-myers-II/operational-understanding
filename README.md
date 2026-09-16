@@ -8,7 +8,7 @@ so going deeper never changes what you are looking at:
 | Tab | What it holds |
 |---|---|
 | **Plain** | the whole thing in everyday words, then the part names |
-| **High** | the world by name — processes, modules, framework terms defined once, black boxes drawn explicitly — then each part's job, inputs, outputs, functions, state |
+| **High** | the world by name — processes, modules, framework terms defined once, neighbors faded by relevance — then each part's job, inputs, outputs, functions, state |
 | **Mid** | one card per part: file + function, large functions broken into plain-English chunks with a `look for:` cue (no line numbers) |
 | **Low** | one card per part: verbatim code beside plain English |
 | **Principles** | the choices the code rests on, each linked to the code that implements it |

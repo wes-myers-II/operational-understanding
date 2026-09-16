@@ -26,11 +26,12 @@ drawn as the frame around them.
 ## 1. Scope and research
 
 1. **Pin the focus.** A subsystem, a feature, or a flow. Record the branch/commit for the header.
-2. **Draw the boundary.** Decide what is *inside* (this code decides it) and what is a **black
-   box** (this code only sends to it, receives from it, or is gated by its state). Anything on
-   the far side of a transport boundary — another process, another repo, hardware, a network peer
-   — is a black box unless the user says otherwise. For a black box, record only what it accepts,
-   what it returns, and what state it reports.
+2. **Draw the boundary.** Decide what is *inside* (this code decides it) and how far everything else is
+   from it. **Fade by relevance:** the further a thing is from the focus, the more opaquely it is
+   described. Something on the far side of a transport boundary — another process, another repo,
+   hardware, a network peer — gets one line: what it accepts, what it returns, what state it
+   reports. Nothing about its insides. This is prioritization, so the reader can take the system
+   in bite-size pieces; it is never a label to print on the page.
 3. **Trace the real code.** Entry points, threads/loops, every function you will name. Delegate
    broad search to an Explore agent; read the load-bearing functions yourself.
 4. **Collect anchors:** file + function for every part; the plain-English name of each chunk
@@ -49,15 +50,15 @@ gap with a guess.
 
 | Gap | Ask for |
 |---|---|
-| A module or dependency the focus area calls whose source is not in this repo | where it lives (another repo, a vendored lib, a service); whether to treat it as a black box; what it accepts and returns |
+| A module or dependency the focus area calls whose source is not in this repo | where it lives (another repo, a vendored lib, a service); how far from the focus to hold it; what it accepts and returns |
 | An outside system that shapes behavior (a peer program, a config file written elsewhere, a deploy tool, hardware, a clock) | who owns it; what it provides; whether there is a doc or repo to read |
 | An assumption you are about to encode (a default, a timeout's origin, a protocol's guarantee) that the code does not state | confirmation, or the source |
 | The user has named a change ("…and the thing I want to add / remove / change") | exactly what the change is, so the *Your change* section can list what it touches |
 | Two candidate part lists and the code does not settle which is right | which framing the user thinks in |
 
 Phrase questions so the answer bridges the gap: "The focus calls `Foo::Bar` from `libfoo`,
-which is not in this repo. Is that a black box for our purposes, or should I read its source —
-and if so, where is it?"
+which is not in this repo. Do I hold it at arm's length — one line on what it accepts and returns — or should I read
+its source, and if so, where is it?"
 
 ## 2. Write, in the fixed tab order
 
@@ -66,12 +67,12 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 | Tab | Answers | Unit | Anchor |
 |---|---|---|---|
 | **Plain** | How would I explain this to anyone? | one short passage, 4th-grade reading level, then the part names | none |
-| **High** | What world does this live in, where is the boundary, what are the parts? | processes, modules, black boxes; the parts with job / in / out / functions / state | module and component names; function names listed, not shown |
+| **High** | What world does this live in, where is the boundary, what are the parts? | processes, modules, faded neighbors; the parts with job / in / out / functions / state | module and component names; function names listed, not shown |
 | **Mid** | Inside each part, which functions do what, in what order? | one card per part; file + function; chunk maps for large functions; hand-offs to other parts by name | `File.cc · Function · chunk name` |
 | **Low** | Exactly what does this chunk's code do? | one card per part; verbatim code beside plain English | same |
 | **Principles** | Why is it built this way? | the choices, each linked to the Low card that implements it | part names |
 | **Traces** | What does a real situation look like through these parts? | 3–6 real journeys, steps tagged by part | part names + functions |
-| **Your change** (when named) | What does my change touch? | the parts, chunks, state, and black-box contracts it affects | part names + functions |
+| **Your change** (when named) | What does my change touch? | the parts, chunks, state, and boundary contracts it affects | part names + functions |
 | **Where to look** | Something is wrong — where do I start? | symptom → part → function → grep string; ≥ 6 rows | functions |
 
 ## 3. Rules that hold everywhere
@@ -88,8 +89,8 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 - **Diagrams come from two templates only** — the architecture grid and the sequence — built by
   the engine from declared positions. One question per diagram; one figure slot per card with a
   picker. See `reference/diagram-guide.md`.
-- **Simplify at the right layer.** Mid should make a part feel as simple as it is. Black boxes
-  stay black; the reader is told what crosses the boundary, never what happens inside.
+- **Simplify at the right layer.** Mid should make a part feel as simple as it is. Faded
+  neighbors stay faded; the reader is told what crosses the boundary, never what happens inside.
 
 ## 4. Build and publish
 
@@ -122,7 +123,7 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 
 - [ ] The part list is the same on High, Mid, Low, Traces, and the map.
 - [ ] The Plain passage can be read aloud to someone outside engineering.
-- [ ] Every black box is named as one, with what crosses its boundary.
+- [ ] Everything outside the focus is faded to what crosses its boundary; nothing outside is explained from the inside.
 - [ ] Every gap was asked about, not guessed; answers are reflected in the text.
 - [ ] Every function named exists on the stated branch; every excerpt is verbatim.
 - [ ] No line numbers; no negation-definitions; no undefined framework terms.

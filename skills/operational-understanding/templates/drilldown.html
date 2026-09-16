@@ -205,8 +205,8 @@
   <div class="boxes"><div class="box"><div class="t">Group</div><ul><li>…</li></ul></div></div>
   <figure class="diagset"><script type="application/json">[
     {"title":"Where FOCUS sits","type":"arch","rows":2,"caption":"Columns are places, left = farthest from the focus. Edges are transports.",
-     "cols":[{"label":"Outside"},{"label":"Process holding the focus"},{"label":"Bridge"},{"label":"Black box"}],
-     "nodes":[{"id":"a","col":0,"row":0,"label":"outside actor"},{"id":"f","col":1,"row":0,"label":"FOCUS","part":"L"},{"id":"b","col":2,"row":0,"label":"bridge component"},{"id":"x","col":3,"row":0,"label":"black box","black":true}],
+     "cols":[{"label":"Outside"},{"label":"Process holding the focus"},{"label":"Bridge"},{"label":"Further away"}],
+     "nodes":[{"id":"a","col":0,"row":0,"label":"outside actor"},{"id":"f","col":1,"row":0,"label":"FOCUS","part":"L"},{"id":"b","col":2,"row":0,"label":"bridge component"},{"id":"x","col":3,"row":0,"label":"far component","faded":true}],
      "edges":[{"from":"a","to":"f","label":"protocol · port"},{"from":"f","to":"b","label":"what moves"},{"from":"b","to":"x","label":"topic / call"},{"from":"x","to":"b","label":"reply"}]}
   ]</script></figure>
   <div class="scroll"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td></td><td></td><td></td></tr></table></div>
@@ -215,20 +215,20 @@
   <p class="answer"><b>One sentence.</b></p>
   <figure class="diagset"><script type="application/json">[
     {"title":"Location of the parts","type":"arch","rows":3,"caption":"Rows = the order data meets the parts. Dashed frame = the container that runs them. Solid edges go right or down; dashed returns run along the bottom.",
-     "cols":[{"label":"Outside"},{"label":"FOCUS"},{"label":"Bridge"},{"label":"Black box"}],
+     "cols":[{"label":"Outside"},{"label":"FOCUS"},{"label":"Bridge"},{"label":"Further away"}],
      "frames":[{"label":"CONTAINER — one pass runs 1 → 2 → 3","col":1,"rowFrom":0,"rowTo":2}],
-     "nodes":[{"id":"a","col":0,"row":1,"label":"actor"},{"id":"p1","col":1,"row":0,"label":"1 PART","part":1},{"id":"p2","col":1,"row":1,"label":"2 PART","part":2},{"id":"p3","col":1,"row":2,"label":"3 PART","part":3},{"id":"b","col":2,"row":1,"label":"bridge"},{"id":"x","col":3,"row":1,"label":"black box","black":true}],
+     "nodes":[{"id":"a","col":0,"row":1,"label":"actor"},{"id":"p1","col":1,"row":0,"label":"1 PART","part":1},{"id":"p2","col":1,"row":1,"label":"2 PART","part":2},{"id":"p3","col":1,"row":2,"label":"3 PART","part":3},{"id":"b","col":2,"row":1,"label":"bridge"},{"id":"x","col":3,"row":1,"label":"far component","faded":true}],
      "edges":[{"from":"a","to":"p2","label":"input"},{"from":"p2","to":"p3","label":"…"},{"from":"p3","to":"b","label":"output"},{"from":"b","to":"x","label":"…"},{"from":"p3","to":"a","label":"reply"}]},
     {"title":"Do X (one path)","type":"seq","caption":"Columns = actors and parts; numbered rows = steps in time; a box on a column is work inside that part; a later row pointing left is a loop back.",
-     "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"p2","label":"2 PART","part":2},{"id":"b","label":"bridge"},{"id":"x","label":"black box","black":true}],
+     "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"p2","label":"2 PART","part":2},{"id":"b","label":"bridge"},{"id":"x","label":"far component","faded":true}],
      "steps":[{"from":"a","to":"p1","label":"input · transport"},{"from":"p1","to":"p1","label":"Function: what it decides"},{"from":"p1","to":"p2","label":"hand-off"},{"from":"p2","to":"b","label":"Function → output"},{"from":"b","to":"x","label":"…"},{"from":"x","to":"a","label":"reply"}]}
   ]</script></figure>
   <h3>The paths an outside actor can take — one row per thing it can do</h3>
   <div class="paths">
     <div class="pathrow"><div class="lbl">Do X<small>one clause</small></div>
-      <div class="strip"><span class="ext">actor → boundary</span><span class="arr">→</span><span class="part p1">1 PART</span><span class="fnn">Function</span><span class="arr">→</span><span class="part p2">2 PART</span><span class="fnn">Function</span><span class="arr">→</span><span class="ext">black box</span></div></div>
+      <div class="strip"><span class="ext">actor → boundary</span><span class="arr">→</span><span class="part p1">1 PART</span><span class="fnn">Function</span><span class="arr">→</span><span class="part p2">2 PART</span><span class="fnn">Function</span><span class="arr">→</span><span class="ext">far component</span></div></div>
   </div>
-  <p class="hub-intro">Dashed boxes are outside the parts. Every path starts at an actor or a timer, passes through parts in order, and ends at a black box or back at the actor.</p>
+  <p class="hub-intro">Dashed boxes are outside the parts. Every path starts at an actor or a timer, passes through parts in order, and ends at a faded neighbor or back at the actor.</p>
   <div class="scroll"><table><tr><th>Part</th><th>Job</th><th>In</th><th>Out</th><th>Functions it contains</th><th>State it owns</th></tr>
   <tr><td><span class="part p1">1 PART</span></td><td></td><td></td><td></td><td><code>Function</code></td><td><code>member_</code></td></tr></table></div>
   <div class="callout"><span class="k">What reaches in from outside, by part</span> …</div>
@@ -392,7 +392,7 @@
       const path = `M${nx(a) + nodeW},${y1} H${gx1} V${yl} H${gx2} V${y2} H${nx(b)}`;
       out += `<path class="dg-edge dg-ret" d="${path}" marker-end="url(#dga)"/>`;
       if (e.label) out += tspans((gx1 + gx2) / 2, yl - 8, wrap(e.label, 70), 'dg-elabel', 'middle', 12); });
-    d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${n.black ? ';stroke-dasharray:4 3' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
+    d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${(n.faded || n.black) ? ';stroke-dasharray:4 3;fill-opacity:.55' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
     return svgWrap(W, H, out, 'dga');
   }
 
@@ -405,7 +405,7 @@
       const h = (a === b ? 14 : 10) + lines.length * 13 + 16; const row = { st, a, b, lines, y, h }; y += h; return row; });
     const W = left + d.cols.length * colW + 16, H = y + 16;
     let out = '';
-    d.cols.forEach((c, i) => { out += `<rect class="dg-node" x="${x(i) - colW / 2 + 8}" y="${16}" width="${colW - 16}" height="${headH}" rx="3" style="fill:${c.part != null ? PART_FILL[c.part] : 'var(--card)'}${c.black ? ';stroke-dasharray:4 3' : ''}"/>`;
+    d.cols.forEach((c, i) => { out += `<rect class="dg-node" x="${x(i) - colW / 2 + 8}" y="${16}" width="${colW - 16}" height="${headH}" rx="3" style="fill:${c.part != null ? PART_FILL[c.part] : 'var(--card)'}${(c.faded || c.black) ? ';stroke-dasharray:4 3;fill-opacity:.55' : ''}"/>`;
       out += tspans(x(i), 16 + headH / 2 + 4, headers[i], 'dg-nlabel'); out += `<line class="dg-life" x1="${x(i)}" y1="${16 + headH}" x2="${x(i)}" y2="${H - 12}"/>`; });
     rows.forEach((r, i) => { const yArrow = r.y + r.h - 12, yText = r.y + 8 + (r.lines.length * 13) / 2;
       out += tspans(16, yArrow + 4, [String(i + 1)], 'dg-stepno');

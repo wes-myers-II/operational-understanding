@@ -14,24 +14,24 @@
   ],
   "vocabulary": "<b>client</b> = the outside program, <b>downstream</b> = the thing that acts.",
   "high": [
-    {"route": "world", "title": "Where the subsystem sits in the system", "fn": "process · bridge · black box", "hook": "The processes involved and what is a black box from here.", "min": 2,
+    {"route": "world", "title": "Where the subsystem sits in the system", "fn": "process · bridge · further away", "hook": "The processes involved and how far each is from the focus.", "min": 2,
      "body": "<p class=\"answer\"><b>One sentence on the world.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td><b>Gatekeeper</b></td><td>a class in the service process</td><td>{{L}} running {{part:intake}}, {{part:check}}, {{part:reply}}</td></tr></table></div>",
      "diagrams": [
        {"title": "Where it sits", "type": "arch", "rows": 1, "caption": "Columns are places. Edges are transports.",
-        "cols": [{"label": "Outside"}, {"label": "Service process"}, {"label": "Bridge"}, {"label": "Black box"}],
-        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "g", "col": 1, "row": 0, "label": "Gatekeeper", "part": "L"}, {"id": "b", "col": 2, "row": 0, "label": "Bridge"}, {"id": "d", "col": 3, "row": 0, "label": "Downstream", "black": true}],
+        "cols": [{"label": "Outside"}, {"label": "Service process"}, {"label": "Bridge"}, {"label": "Further away"}],
+        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "g", "col": 1, "row": 0, "label": "Gatekeeper", "part": "L"}, {"id": "b", "col": 2, "row": 0, "label": "Bridge"}, {"id": "d", "col": 3, "row": 0, "label": "Downstream", "faded": true}],
         "edges": [{"from": "c", "to": "g", "label": "HTTP · 8080"}, {"from": "g", "to": "b", "label": "checked request"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}]}
      ]},
     {"route": "parts", "title": "What the Gatekeeper does — the Loop, three parts, and the paths through them", "fn": "{{name:intake}} · {{name:check}} · {{name:reply}}", "hook": "Location of the parts, then one sequence per thing a client can do.", "min": 3,
      "body": "<p class=\"answer\"><b>One Loop, three parts, numbered in the order a request meets them.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Part</th><th>Job</th><th>In</th><th>Out</th><th>Functions</th><th>State</th></tr><tr><td>{{part:intake}}</td><td>receive</td><td>request</td><td>parsed request</td><td><code>Receive</code></td><td><code>queue_</code></td></tr></table></div>",
      "diagrams": [
        {"title": "Location of the parts", "type": "arch", "rows": 3, "caption": "Rows are path order; the dashed frame is the Loop.",
-        "cols": [{"label": "Outside"}, {"label": "Gatekeeper"}, {"label": "Bridge"}, {"label": "Black box"}],
+        "cols": [{"label": "Outside"}, {"label": "Gatekeeper"}, {"label": "Bridge"}, {"label": "Further away"}],
         "frames": [{"label": "The Loop — one pass runs 1 → 2 → 3", "col": 1, "rowFrom": 0, "rowTo": 2}],
-        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "p1", "col": 1, "row": 0, "part": "intake"}, {"id": "p2", "col": 1, "row": 1, "part": "check"}, {"id": "p3", "col": 1, "row": 2, "part": "reply"}, {"id": "b", "col": 2, "row": 1, "label": "Bridge"}, {"id": "d", "col": 3, "row": 1, "label": "Downstream", "black": true}],
+        "nodes": [{"id": "c", "col": 0, "row": 0, "label": "Client"}, {"id": "p1", "col": 1, "row": 0, "part": "intake"}, {"id": "p2", "col": 1, "row": 1, "part": "check"}, {"id": "p3", "col": 1, "row": 2, "part": "reply"}, {"id": "b", "col": 2, "row": 1, "label": "Bridge"}, {"id": "d", "col": 3, "row": 1, "label": "Downstream", "faded": true}],
         "edges": [{"from": "c", "to": "p1", "label": "request · 8080"}, {"from": "p1", "to": "p2", "label": "parsed"}, {"from": "p2", "to": "b", "label": "allowed"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}, {"from": "b", "to": "p3", "label": "queued result"}, {"from": "p3", "to": "c", "label": "answer"}]},
        {"title": "Send a request", "type": "seq", "caption": "Columns are actors and parts; rows are steps.",
-        "cols": [{"id": "c", "label": "Client"}, {"id": "p1", "part": "intake"}, {"id": "p2", "part": "check"}, {"id": "p3", "part": "reply"}, {"id": "b", "label": "Bridge"}, {"id": "d", "label": "Downstream", "black": true}],
+        "cols": [{"id": "c", "label": "Client"}, {"id": "p1", "part": "intake"}, {"id": "p2", "part": "check"}, {"id": "p3", "part": "reply"}, {"id": "b", "label": "Bridge"}, {"id": "d", "label": "Downstream", "faded": true}],
         "steps": [{"from": "c", "to": "p1", "label": "request on 8080"}, {"from": "p1", "to": "p1", "label": "Receive: parse"}, {"from": "p1", "to": "p2", "label": "parsed"}, {"from": "p2", "to": "b", "label": "Check → Forward"}, {"from": "b", "to": "d", "label": "queue"}, {"from": "d", "to": "b", "label": "result"}, {"from": "b", "to": "p3", "label": "queued result"}, {"from": "p3", "to": "c", "label": "answer"}]}
      ]}
   ],

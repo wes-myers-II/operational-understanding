@@ -106,22 +106,27 @@ def esc(t):
 
 # ---------------------------------------------------------------- diagrams
 
-def resolve_diagram(d, num, name, lint, where):
+def resolve_diagram(d, num, name, lint, where, cont=None):
     """Fill labels/colors from the parts list; validate ids."""
     d = json.loads(json.dumps(d))
     if d.get("type") == "seq":
         ids = set()
         for c in d["cols"]:
             ids.add(c["id"])
+            if c.pop("black", False):
+                c["faded"] = True
             if "part" in c:
                 pid = c["part"]
-                if pid == "L":
+                if pid == "L" or (cont and pid == cont["id"]):
                     c["part"] = "L"
+                    c.setdefault("label", cont["name"] if cont else "")
                 elif pid in num:
                     c.setdefault("label", f"{num[pid]} {name[pid]}")
                     c["part"] = num[pid]
                 else:
                     lint.err(where, f"seq col references unknown part '{pid}'")
+            if not c.get("label"):
+                lint.err(where, f"seq col '{c['id']}' has no label")
         for st in d["steps"]:
             for k in ("from", "to"):
                 if st[k] not in ids:
@@ -130,15 +135,20 @@ def resolve_diagram(d, num, name, lint, where):
         ids = set()
         for n in d["nodes"]:
             ids.add(n["id"])
+            if n.pop("black", False):
+                n["faded"] = True
             if "part" in n:
                 pid = n["part"]
-                if pid == "L":
+                if pid == "L" or (cont and pid == cont["id"]):
                     n["part"] = "L"
+                    n.setdefault("label", cont["name"] if cont else "")
                 elif pid in num:
                     n.setdefault("label", f"{num[pid]} {name[pid]}")
                     n["part"] = num[pid]
                 else:
                     lint.err(where, f"arch node references unknown part '{pid}'")
+            if not n.get("label"):
+                lint.err(where, f"arch node '{n['id']}' has no label")
             if n["col"] >= len(d["cols"]):
                 lint.err(where, f"node {n['id']} col {n['col']} out of range")
             if n["row"] >= d["rows"]:
@@ -153,6 +163,13 @@ def resolve_diagram(d, num, name, lint, where):
     if not d.get("caption"):
         lint.warn(where, f"diagram '{d.get('title')}' has no caption")
     return d
+
+
+_CONTAINER = {"value": None}
+
+
+def spec_cont(_card=None):
+    return _CONTAINER["value"]
 
 
 def diagset(diagrams):
@@ -194,7 +211,7 @@ def article(card, level, render, num, name, lint, extra_class=""):
     lint_fragment(body, where, lint)
     diag = ""
     if card.get("diagrams"):
-        diag = diagset([resolve_diagram(d, num, name, lint, where) for d in card["diagrams"]])
+        diag = diagset([resolve_diagram(d, num, name, lint, where, spec_cont(card)) for d in card["diagrams"]])
         body = body.replace("{{diagrams}}", diag) if "{{diagrams}}" in body else diag + body
     fn = render(card.get("fn", ""), where)
     attrs = (f'data-route="/{level}/{card["route"]}" data-level="{level}" data-title="{esc(card["title"])}" '
@@ -224,6 +241,7 @@ def part_card(card, level, spec, render, num, name, cls, lint):
 
 def build(spec):
     lint = Lint()
+    _CONTAINER["value"] = spec.get("container")
     render, num, name, cls = make_token_renderer(spec, lint)
     style, script = load_shell()
     cont = spec.get("container")

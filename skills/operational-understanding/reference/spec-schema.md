@@ -54,15 +54,15 @@ Nodes and columns reference parts by id; the builder fills label and color.
 
 ```json
 { "title": "Location of the parts", "type": "arch", "rows": 4, "caption": "…",
-  "cols": [{"label": "Outside"}, {"label": "FOCUS"}, {"label": "Bridge"}, {"label": "Black box"}],
+  "cols": [{"label": "Outside"}, {"label": "FOCUS"}, {"label": "Bridge"}, {"label": "Further away"}],
   "frames": [{"label": "The loop — one pass runs 1 → 2 → 3 → 4", "col": 1, "rowFrom": 0, "rowTo": 3}],
   "nodes": [{"id": "c", "col": 0, "row": 1, "label": "Connector"},
             {"id": "p1", "col": 1, "row": 0, "part": "connect"},
-            {"id": "x", "col": 3, "row": 0, "label": "RTC", "black": true}],
+            {"id": "x", "col": 3, "row": 0, "label": "RTC", "faded": true}],
   "edges": [{"from": "c", "to": "p1", "label": "knock · 5554"}] }
 
 { "title": "Become the driver", "type": "seq", "caption": "…",
-  "cols": [{"id": "c", "label": "Connector"}, {"id": "p1", "part": "connect"}, {"id": "x", "label": "RTC", "black": true}],
+  "cols": [{"id": "c", "label": "Connector"}, {"id": "p1", "part": "connect"}, {"id": "x", "label": "RTC", "faded": true}],
   "steps": [{"from": "c", "to": "p1", "label": "knock on 5554"}, {"from": "p1", "to": "p1", "label": "ZmqWaitForDrivebyMain"}] }
 ```
 
@@ -73,7 +73,7 @@ gutters, one question per diagram, one picker per card.
 ## What the build refuses
 
 - a part with no mid or low card; more than 8 parts
-- a bare `part N` in text; an unknown part id in a token or diagram
+- a bare `part N` in text; an unknown part id in a token or diagram; a diagram node or column with no label
 - a line-number anchor (`File.cc:123`, `(~123)`, `~1234`)
 - an ellipsis inside a code excerpt outside an `<span class="om">` cut marker
 - a bare-label title ("The parts", "Identity")
