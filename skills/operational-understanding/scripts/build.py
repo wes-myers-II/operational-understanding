@@ -119,7 +119,6 @@ def resolve_diagram(d, num, name, lint, where, cont=None):
                 pid = c["part"]
                 if pid == "L" or (cont and pid == cont["id"]):
                     c["part"] = "L"
-                    c.setdefault("label", cont["name"] if cont else "")
                 elif pid in num:
                     c.setdefault("label", f"{num[pid]} {name[pid]}")
                     c["part"] = num[pid]
@@ -141,7 +140,6 @@ def resolve_diagram(d, num, name, lint, where, cont=None):
                 pid = n["part"]
                 if pid == "L" or (cont and pid == cont["id"]):
                     n["part"] = "L"
-                    n.setdefault("label", cont["name"] if cont else "")
                 elif pid in num:
                     n.setdefault("label", f"{num[pid]} {name[pid]}")
                     n["part"] = num[pid]
@@ -170,6 +168,22 @@ _CONTAINER = {"value": None}
 
 def spec_cont(_card=None):
     return _CONTAINER["value"]
+
+
+def check_shared_words(diagrams, body_text, where, lint):
+    """Every name drawn on a card's diagrams must also appear in that card's text (the vocabulary rule)."""
+    text = re.sub(r"<[^>]+>", " ", body_text).lower()
+    for d in diagrams:
+        items = d.get("nodes", []) + d.get("cols", [])
+        for it in items:
+            if "part" in it or not it.get("label"):
+                continue
+            for piece in re.split(r"\s+[·—/|]\s+|\s+and\s+|\s*\(|\)", it["label"]):
+                piece = piece.strip().lower()
+                if len(piece) < 4 or piece in ("nodes", "node", "program", "the", "process"):
+                    continue
+                if piece not in text:
+                    lint.err(where, f"diagram name {piece!r} (from label {it['label']!r}) does not appear in this card's text — use the same words on the diagram and in the prose")
 
 
 def diagset(diagrams):
@@ -220,7 +234,9 @@ def article(card, level, render, num, name, lint, extra_class=""):
     lint_fragment(body, where, lint)
     diag = ""
     if card.get("diagrams"):
-        diag = diagset([resolve_diagram(d, num, name, lint, where, spec_cont(card)) for d in card["diagrams"]])
+        resolved = [resolve_diagram(d, num, name, lint, where, spec_cont(card)) for d in card["diagrams"]]
+        check_shared_words(resolved, body + " " + card.get("title", "") + " " + card.get("fn", ""), where, lint)
+        diag = diagset(resolved)
         body = body.replace("{{diagrams}}", diag) if "{{diagrams}}" in body else diag + body
     fn = render(card.get("fn", ""), where)
     attrs = (f'data-route="/{level}/{card["route"]}" data-level="{level}" data-title="{esc(card["title"])}" '

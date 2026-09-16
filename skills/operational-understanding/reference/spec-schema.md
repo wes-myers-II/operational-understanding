@@ -74,6 +74,7 @@ gutters, one question per diagram, one picker per card.
 
 - a part with no mid or low card; more than 8 parts
 - a bare `part N` in text; an unknown part id in a token or diagram; a diagram node or column with no label
+- a name drawn on a card's diagram that does not appear in that card's text (same words on the diagram, in the tables, and in the prose)
 - a line-number anchor (`File.cc:123`, `(~123)`, `~1234`)
 - an ellipsis inside a code excerpt outside an `<span class="om">` cut marker
 - a bare-label title ("The parts", "Identity")

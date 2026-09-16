@@ -392,7 +392,7 @@
       const path = `M${nx(a) + nodeW},${y1} H${gx1} V${yl} H${gx2} V${y2} H${nx(b)}`;
       out += `<path class="dg-edge dg-ret" d="${path}" marker-end="url(#dga)"/>`;
       if (e.label) out += tspans((gx1 + gx2) / 2, yl - 8, wrap(e.label, 70), 'dg-elabel', 'middle', 12); });
-    d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${(n.faded || n.black) ? ';stroke-dasharray:4 3;fill-opacity:.55' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
+    d.nodes.forEach(n => { out += `<rect class="dg-node" x="${nx(n)}" y="${ny(n)}" width="${nodeW}" height="${n.h}" rx="3" style="fill:${n.part != null ? PART_FILL[n.part] : 'var(--card)'}${(n.faded || n.black) ? ';stroke-dasharray:4 3;fill-opacity:.55' : ''}${n.focus ? ';stroke:var(--accent);stroke-width:2;stroke-opacity:1' : ''}"/>`; out += tspans(cx(n), cy(n) + 4, n.lines, 'dg-nlabel'); });
     return svgWrap(W, H, out, 'dga');
   }
 
