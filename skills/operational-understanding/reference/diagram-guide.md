@@ -10,7 +10,7 @@ page never shows more than one diagram at a time.
 Answers: *where does each thing live, and what moves between them?*
 
 - **Columns are locations**, declared left → right by distance from the actor: outside the
-  system · the process holding the focus · the bridge · the faded neighbors. The same columns on
+  system · the process holding the focus · the bridge · the far components. The same columns on
   every arch diagram in the artifact.
 - **Rows are path order**: row 0 is where data enters; each part sits in the row it is first
   reached. Parts are **numbered in this order**, so the numbers read top to bottom.
@@ -21,7 +21,7 @@ Answers: *where does each thing live, and what moves between them?*
   at a right angle; no two edges run coincident; no edge passes through a box. If two solid
   edges would cross, it is two diagrams.
 - **Edge labels say what moves and over what** ("command · 5555", "reply · kRequestReplyTopic").
-- Faded neighbors get `"faded": true` (dashed, lighter box). Parts get `"part": N` for their color;
+- Far components get `"faded": true` (dashed, lighter box). Parts get `"part": N` for their color;
   the container gets `"part": "L"`.
 
 ```json
@@ -45,7 +45,7 @@ Answers: *for one thing an actor can do, what happens in what order?*
 
 ```json
 {"title":"Do X","type":"seq","caption":"…",
- "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"x","label":"far component","faded":true}],
+ "cols":[{"id":"a","label":"actor"},{"id":"p1","label":"1 PART","part":1},{"id":"x","label":"downstream component","faded":true}],
  "steps":[{"from":"a","to":"p1","label":"input · transport"},{"from":"p1","to":"p1","label":"Function: decision"},{"from":"p1","to":"x","label":"output"}]}
 ```
 
@@ -53,7 +53,7 @@ Answers: *for one thing an actor can do, what happens in what order?*
 
 | Card | Figure slot holds |
 |---|---|
-| High · where it sits | one arch: the world (processes, bridge, faded neighbors, transports) |
+| High · where it sits | one arch: the world (processes, bridge, far components, transports) |
 | High · the parts | one arch (location of the parts) + one seq per path, in the same picker |
 | Traces | one seq per trace |
 | Mid / Low | none by default; a chunk map or table does the job |

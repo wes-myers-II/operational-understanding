@@ -201,7 +201,12 @@ CODE_ELLIPSIS = re.compile(r"\.\.\.|…")
 CROSS_PAGE = re.compile(r"\b(parts?\s+[^<]{0,40}?\bbelow|see below|next level|as above)\b", re.I)
 
 
+META_WORDS = re.compile(r"\b(black[- ]box(?:es)?|faded|fade[sd]? out|further away|out of scope|we (?:only )?(?:simplif|abstract))", re.I)
+
+
 def lint_fragment(html, where, lint):
+    if META_WORDS.search(html):
+        lint.err(where, f"author-side word on the page: {META_WORDS.search(html).group(0)!r} — describe the thing briefly and plainly; never tell the reader how much detail was chosen")
     if where.startswith("high/") and CROSS_PAGE.search(html):
         lint.warn(where, f"cross-page pointer {CROSS_PAGE.search(html).group(0)!r} — each card stands alone; name the card instead")
     if where.startswith("high/") or where == "plain":
@@ -219,6 +224,71 @@ def lint_fragment(html, where, lint):
         code = re.sub(r'<span class="c">.*?</span>', "", code, flags=re.S)
         if CODE_ELLIPSIS.search(code):
             lint.err(where, "ellipsis inside a code excerpt — cuts must be marked with <span class=\"om\">// … N lines omitted: what</span>")
+
+
+# ---------------------------------------------------------------- grounding
+
+IDENT = re.compile(r"\b(?:[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+|k[A-Z][A-Za-z0-9]+|[a-z][a-z0-9]*(?:_[a-z0-9]+)+_|[A-Za-z_][A-Za-z0-9_]*\.(?:cc|h|hpp|py|ts|tsx|js|go|rs|yaml|yml|fbs))\b")
+IDENT_SKIP = {"HealthMsg", "ReqReplyMsg", "ApolloRequestMsg"}  # filled from the spec's `grounding_ok` list too
+COMMON_WORDS = {"FlatBuffer", "FlatBuffers", "TypeScript", "JavaScript", "GitHub", "WebSocket", "PostgreSQL", "MacOS"}
+
+
+def collect_identifiers(spec):
+    """Every identifier-shaped token anywhere the reader can see it."""
+    found = set()
+    def scan(text):
+        text = re.sub(r"<[^>]+>", " ", text or "")
+        for m in IDENT.finditer(text):
+            found.add(m.group(0))
+    for lvl in ("high", "mid", "low", "traces"):
+        for c in spec.get(lvl, []):
+            scan(c.get("title")); scan(c.get("fn")); scan(c.get("hook")); scan(c.get("body")); scan(c.get("links"))
+            for d in c.get("diagrams", []):
+                scan(d.get("title")); scan(d.get("caption"))
+                for it in d.get("nodes", []) + d.get("cols", []):
+                    scan(it.get("label"))
+                for e in d.get("edges", []) + d.get("steps", []):
+                    scan(e.get("label"))
+                for f in d.get("frames", []):
+                    scan(f.get("label"))
+    for p in spec.get("principles", []):
+        scan(p.get("name")); scan(p.get("why")); scan(p.get("where"))
+    for r in spec.get("map", []):
+        scan(r.get("symptom")); scan(r.get("open")); scan(r.get("grep"))
+    scan(spec.get("focus"))
+    return found
+
+
+def ground(spec, lint):
+    """Confirm every identifier on the page exists in the repo (git grep -w). Missing → error."""
+    repo = spec.get("repo")
+    if spec.get("grounding_skip_reason"):
+        lint.warn("grounding", f"identifier grounding SKIPPED: {spec['grounding_skip_reason']} — never do this for a real page")
+        return
+    if not repo:
+        lint.err("grounding", "spec has no `repo` path — every identifier on the page must be checked against the code")
+        return
+    if not os.path.isdir(os.path.join(repo, ".git")) and not os.path.isdir(repo):
+        lint.err("grounding", f"repo path {repo!r} does not exist")
+        return
+    ok = set(IDENT_SKIP) | COMMON_WORDS | set(spec.get("grounding_ok", []))
+    idents = sorted(i for i in collect_identifiers(spec) if i not in ok)
+    missing = []
+    for ident in idents:
+        base = ident.split(".")[0] if re.search(r"\.(cc|h|hpp|py|ts|tsx|js|go|rs|yaml|yml|fbs)$", ident) else ident
+        try:
+            r = subprocess.run(["git", "-C", repo, "grep", "-qIw", "--", base], capture_output=True)
+            hit = r.returncode == 0
+            if not hit and base != ident:
+                hit = subprocess.run(["git", "-C", repo, "ls-files", "--", f"*{ident}"], capture_output=True, text=True).stdout.strip() != ""
+        except FileNotFoundError:
+            lint.err("grounding", "git is not available; cannot ground identifiers")
+            return
+        if not hit:
+            missing.append(ident)
+    for m in missing:
+        lint.err("grounding", f"{m!r} appears on the page but is not found in the repo — a name the reader would trust must exist in the code (or list it in `grounding_ok` with a reason in `grounding_notes`)")
+    print(f"grounding: {len(idents)} identifiers checked against {repo}, {len(missing)} missing")
 
 
 # ---------------------------------------------------------------- page assembly
@@ -318,6 +388,12 @@ def build(spec):
     lows = ''.join(part_card(c, "low", spec, render, num, name, cls, lint) for c in spec["low"])
     traces = ''.join(article(c, "traces", render, num, name, lint) for c in spec.get("traces", []))
 
+    for i, para in enumerate(spec["plain"]):
+        lint_fragment(para, "plain", lint)
+    for pr in spec.get("principles", []):
+        lint_fragment(pr["name"] + " " + pr["why"] + " " + pr["where"], "principles", lint)
+    for r in spec["map"]:
+        lint_fragment(r["symptom"] + " " + r["open"] + " " + r.get("grep", ""), "map", lint)
     why_rows = ''.join(f'<tr><td><b>{render(p["name"], "principles")}</b></td><td>{render(p["why"], "principles")}</td><td>{render(p["where"], "principles")}</td></tr>' for p in spec.get("principles", []))
     why = f'''<section class="page" data-route="/why" data-level="why">
   <h2>Why it is built this way</h2>
@@ -366,6 +442,7 @@ def build(spec):
 
 {script}
 '''
+    ground(spec, lint)
     # ---- page-level checks
     main_js = html[html.rindex("<script>") + 8: html.rindex("</script>")]
     if re.search(r"</\s*script", main_js, re.I):

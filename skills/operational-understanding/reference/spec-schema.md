@@ -11,6 +11,9 @@ chrome, and the shell; it refuses to emit a page that fails lint or the layout c
 |---|---|
 | `title`, `favicon` | artifact name (a noun phrase) and one emoji |
 | `branch`, `focus` | shown in the header: `"branch @ sha"`, `"path/to/module (Class, Class)"` |
+| `repo` | **required** — path to the checkout the page describes; every identifier on the page is checked against it with `git grep` |
+| `grounding_skip_reason` | only for a spec with no repository behind it (the neutral example); the build warns loudly. Never on a real page |
+| `grounding_ok` | identifiers that legitimately are not in the repo (a peer program's class, a protocol name); each needs a line in `grounding_notes` saying where it does live |
 | `container` | optional `{ "id", "name" }` — the unnumbered thing that runs the parts (a loop, a scheduler); drawn as a frame, gets the dashed chip |
 | `parts` | `[{ "id", "name" }]` **in the order data meets them** — this order is the numbering everywhere |
 | `plain` | list of `<p>` fragments, 4th-grade reading level, no code names |

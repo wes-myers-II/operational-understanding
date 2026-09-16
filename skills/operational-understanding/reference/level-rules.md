@@ -19,7 +19,7 @@ Two cards:
 that exist, using the codebase's own terms and defining each framework term in one clause
 (e.g. what a "Node" or an "Application" is in this framework). One diagram: boxes are
 processes/modules, edges are the transport between them (protocol, topic, file). State
-explicitly what this subsystem is responsible for and what is a faded neighbor; for each faded neighbor,
+explicitly what this subsystem is responsible for and how far each other thing is from it; for each far thing,
 what it accepts, returns, and reports. A table: component → kind → responsible for.
 
 **The parts.** One figure slot with a picker: first the **architecture grid** of the parts
@@ -30,8 +30,8 @@ answer, …). See `diagram-guide.md`. Under it, a table: what happens → path t
 contains → state it owns. Function and member names appear here so Mid attaches to them; nothing about
 how they work. Close with "what reaches in from outside, by part".
 
-Detail level — **fade by relevance**: the further a thing is from the focus, the more opaquely it is described. Far things get one line ("RTC acts on request topics and publishes replies");
-near things get their names. The reader should not need to know how a faded neighbor works to
+Detail level — **fade by relevance**: the further a thing is from the focus, the more opaquely it is described — and the reader is never told this; no "faded", "black box", or "further away" on the page. Far things get one line ("RTC acts on request topics and publishes replies");
+near things get their names. The reader should not need to know how a far component works to
 understand this subsystem.
 
 ## Mid — inside each part

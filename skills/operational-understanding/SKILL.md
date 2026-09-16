@@ -31,7 +31,9 @@ drawn as the frame around them.
    described. Something on the far side of a transport boundary — another process, another repo,
    hardware, a network peer — gets one line: what it accepts, what it returns, what state it
    reports. Nothing about its insides. This is prioritization, so the reader can take the system
-   in bite-size pieces; it is never a label to print on the page.
+   in bite-size pieces. It is an author's rule, never a label: the words "black box", "faded",
+   "further away", "out of scope" must not appear on the page (the builder refuses them). The
+   reader just sees a short, plain description of the far thing.
 3. **Trace the real code.** Entry points, threads/loops, every function you will name. Delegate
    broad search to an Explore agent; read the load-bearing functions yourself.
 4. **Collect anchors:** file + function for every part; the plain-English name of each chunk
@@ -40,7 +42,11 @@ drawn as the frame around them.
    threading constraint, an ordering guarantee, a persistence decision). These become the
    Principles tab.
 6. **Verify anything you will assert as behavior by reading the code that does it.** A claim
-   from a comment or ticket is marked *verify* or removed.
+   from a comment or ticket is marked *verify* or removed. **Name every component by its code
+   identifier** (the class, node, or module name as it appears in the source), never by a
+   description from a comment ("video Node"). The builder checks every identifier on the page
+   against the repo with `git grep` and refuses names it cannot find; that check is the floor,
+   not the ceiling — a fresh reader must be able to trust every name without correcting you.
 
 ### Ask when the repo cannot answer
 
@@ -67,7 +73,7 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 | Tab | Answers | Unit | Anchor |
 |---|---|---|---|
 | **Plain** | How would I explain this to anyone? | one short passage, 4th-grade reading level, then the part names | none |
-| **High** | What world does this live in, where is the boundary, what are the parts? | processes, modules, faded neighbors; the parts with job / in / out / functions / state | module and component names; function names listed, not shown |
+| **High** | What world does this live in, where is the boundary, what are the parts? | processes, modules, far components; the parts with job / in / out / functions / state | module and component names; function names listed, not shown |
 | **Mid** | Inside each part, which functions do what, in what order? | one card per part; file + function; chunk maps for large functions; hand-offs to other parts by name | `File.cc · Function · chunk name` |
 | **Low** | Exactly what does this chunk's code do? | one card per part; verbatim code beside plain English | same |
 | **Principles** | Why is it built this way? | the choices, each linked to the Low card that implements it | part names |
@@ -89,8 +95,8 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 - **Diagrams come from two templates only** — the architecture grid and the sequence — built by
   the engine from declared positions. One question per diagram; one figure slot per card with a
   picker. See `reference/diagram-guide.md`.
-- **Simplify at the right layer.** Mid should make a part feel as simple as it is. Faded
-  neighbors stay faded; the reader is told what crosses the boundary, never what happens inside.
+- **Simplify at the right layer.** Mid should make a part feel as simple as it is. Far
+  components stay brief; the reader is told what crosses the boundary, never what happens inside.
 
 ## 4. Build and publish
 
@@ -123,7 +129,8 @@ Read `reference/level-rules.md` for the contents of each tab. In brief:
 
 - [ ] The part list is the same on High, Mid, Low, Traces, and the map.
 - [ ] The Plain passage can be read aloud to someone outside engineering.
-- [ ] Everything outside the focus is faded to what crosses its boundary; nothing outside is explained from the inside.
+- [ ] Everything outside the focus is described only by what crosses its boundary; nothing outside is explained from the inside; no author-side words on the page.
+- [ ] Every component is named by its code identifier and the grounding check passed.
 - [ ] Every gap was asked about, not guessed; answers are reflected in the text.
 - [ ] Every function named exists on the stated branch; every excerpt is verbatim.
 - [ ] No line numbers; no negation-definitions; no undefined framework terms.

@@ -29,10 +29,10 @@
     {
       "route": "world",
       "title": "Where the subsystem sits in the system",
-      "fn": "process · bridge · further away",
-      "hook": "The processes involved and how far each is from the focus.",
+      "fn": "Client · Gatekeeper · Bridge · Downstream",
+      "hook": "The processes involved and what moves between them.",
       "min": 2,
-      "body": "<p class=\"answer\"><b>A Client outside the system sends requests to the Gatekeeper; the Gatekeeper hands checked requests to the Bridge, which queues them for Downstream, further away and faded.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td><b>Gatekeeper</b></td><td>a class in the service process</td><td>{{L}} running {{part:intake}}, {{part:check}}, {{part:reply}}</td></tr></table></div>",
+      "body": "<p class=\"answer\"><b>A Client outside the system sends requests to the Gatekeeper; the Gatekeeper hands checked requests to the Bridge, which queues them for the Downstream systems.</b></p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Component</th><th>Kind</th><th>Responsible for</th></tr><tr><td><b>Gatekeeper</b></td><td>a class in the service process</td><td>{{L}} running {{part:intake}}, {{part:check}}, {{part:reply}}</td></tr></table></div>",
       "diagrams": [
         {
           "title": "Where it sits",
@@ -50,7 +50,7 @@
               "label": "Bridge"
             },
             {
-              "label": "Further away"
+              "label": "Downstream systems"
             }
           ],
           "nodes": [
@@ -77,7 +77,7 @@
               "id": "d",
               "col": 3,
               "row": 0,
-              "label": "Downstream",
+              "label": "Downstream systems",
               "faded": true
             }
           ],
@@ -112,7 +112,7 @@
       "fn": "{{name:intake}} · {{name:check}} · {{name:reply}}",
       "hook": "Location of the parts, then one sequence per thing a client can do.",
       "min": 3,
-      "body": "<p class=\"answer\"><b>One Loop, three parts, numbered in the order a request meets them.</b> The Client sits outside; the Bridge and Downstream sit to the right, further away and faded.</p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Part</th><th>Job</th><th>In</th><th>Out</th><th>Functions</th><th>State</th></tr><tr><td>{{part:intake}}</td><td>receive</td><td>request</td><td>parsed request</td><td><code>Receive</code></td><td><code>queue_</code></td></tr></table></div>",
+      "body": "<p class=\"answer\"><b>One Loop, three parts, numbered in the order a request meets them.</b> The Client sits outside; the Bridge and the Downstream systems sit to the right.</p>{{diagrams}}<div class=\"scroll\"><table><tr><th>Part</th><th>Job</th><th>In</th><th>Out</th><th>Functions</th><th>State</th></tr><tr><td>{{part:intake}}</td><td>receive</td><td>request</td><td>parsed request</td><td><code>Receive</code></td><td><code>queue_</code></td></tr></table></div>",
       "diagrams": [
         {
           "title": "Location of the parts",
@@ -130,7 +130,7 @@
               "label": "Bridge"
             },
             {
-              "label": "Further away"
+              "label": "Downstream systems"
             }
           ],
           "frames": [
@@ -176,7 +176,7 @@
               "id": "d",
               "col": 3,
               "row": 1,
-              "label": "Downstream",
+              "label": "Downstream systems",
               "faded": true
             }
           ],
@@ -245,7 +245,7 @@
             },
             {
               "id": "d",
-              "label": "Downstream",
+              "label": "Downstream systems",
               "faded": true
             }
           ],
@@ -469,5 +469,6 @@
       "open": "<code>Reply</code>",
       "grep": "<code>routing</code>"
     }
-  ]
+  ],
+  "grounding_skip_reason": "neutral example with no repository behind it"
 }
