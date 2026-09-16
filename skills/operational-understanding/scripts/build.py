@@ -184,7 +184,16 @@ BARE_PART = re.compile(r"\bparts? [1-9]\b")
 CODE_ELLIPSIS = re.compile(r"\.\.\.|…")
 
 
+CROSS_PAGE = re.compile(r"\b(parts?\s+[^<]{0,40}?\bbelow|see below|next level|as above)\b", re.I)
+
+
 def lint_fragment(html, where, lint):
+    if where.startswith("high/") and CROSS_PAGE.search(html):
+        lint.warn(where, f"cross-page pointer {CROSS_PAGE.search(html).group(0)!r} — each card stands alone; name the card instead")
+    if where.startswith("high/") or where == "plain":
+        for m in re.finditer(r"(?:\b(?:part|parts|to|calls|by|from|in|of)\s+)\{\{n:[a-z0-9_-]+\}\}", html):
+            lint.warn(where, f"number-only chip in prose {m.group(0)!r} — use {{{{part:id}}}} so the name travels with the number")
+            break
     if LINE_REF.search(html):
         lint.err(where, f"line-number anchor found: {LINE_REF.search(html).group(0)!r} — anchor with file + function + chunk name")
     if NEGATION.search(html):

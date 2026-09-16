@@ -100,6 +100,13 @@ Tab labels carry the same information in three or four words ("Mid · inside eac
 
 - No line numbers. File + function + chunk name.
 - Every proper noun carries its anchor where it appears.
+- **Each card stands alone.** Never point at another card with "below", "above", or "next"
+  as if it were on the same page; name the card ("the parts card lays them out", "the Mid
+  cards show how"). Restating the web of connections at a high level on more than one card is
+  welcome — that repetition is how the reader ties the pages together.
+- **In prose, parts go by name** (`{{part:id}}` — the numbered chip with the name). Number-only
+  chips (`{{n:id}}`) belong in path strips, tables of steps, and the map, where the sequence is
+  the point; a number alone in a sentence sends the reader hunting.
 - Say what a thing is; define framework terms on first use; no negation-definitions.
 - Verbatim code only; explicit cuts; `// ←` author notes in a distinct color.
 - Diagrams only where a table cannot do the job.
